@@ -43,10 +43,6 @@ IMAGE_CANDIDATES = [
     "oma.jpg",
     "oma.jpeg",
     "oma.png",
-    "klara.JPG",
-    "klara.jpg",
-    "klara.jpeg",
-    "klara.png",
 ]
 
 # ---------- Sound files ----------
@@ -103,6 +99,14 @@ WRONG_RED = (150, 48, 74)
 # ---------- Quiz content — edit freely ----------
 # 4 categories × 5 questions. Question 1 = easiest, question 5 = hardest.
 # Set "answer" to the 0-based index of the correct option.
+# Picture questions:
+# {
+#     "type": "picture",
+#     "q": "Wer ist auf diesem Bild?",
+#     "picture": "bildname.jpg",  # place in assets/
+#     "options": ["A", "B", "C", "D"],
+#     "answer": 0,
+# }
 CATEGORIES = [
     {
         "name": "Allgemeines",
@@ -179,14 +183,9 @@ CATEGORIES = [
                 "answer": 1,
             },
             {
-                "q": "Zu welchem Reich gehörte Triest über viele Jahrhunderte bis zum Ende des Ersten Weltkriegs?",
-                "options": [
-                    "Habsburgerreich / Österreich-Ungarn",
-                    "Osmanisches Reich",
-                    "Französisches Kaiserreich",
-                    "Byzantinisches Reich",
-                ],
-                "answer": 0,
+                "q": "Aus welchem Land stammt Sudoku in seiner heute bekannten Form?",
+                "options": ["China", "Japan", "Südkorea", "Thailand"],
+                "answer": 1,
             },
         ],
     },
@@ -259,6 +258,11 @@ CATEGORIES = [
                 "options": ["Stickstoff", "Phosphor", "Schwefel", "Magnesium"],
                 "answer": 1,
             },
+            {
+                "q": "Wie viele Felder besitzt ein klassisches Sudoku insgesamt?",
+                "options": ["64", "72", "81", "99"],
+                "answer": 2,
+            },
         ],
     },
     {
@@ -270,11 +274,6 @@ CATEGORIES = [
                 "options": ["VW Käfer", "Ford 12M", "Opel Kadett", "Peugeot 104"],
                 "answer": 1,
             },
-            {
-                "q": "Von welchem Getränk hast du immer getrunken wenn du in die Speis gegangen bist?",
-                "options": ["Bols", "Vodka", "Wein", "Korn"],
-                "answer": 1,
-            },  # TODO Papa fragen
             {
                 "q": "In welcher Silvesternacht hast du Gerda nach Hause gefahren?",
                 "options": ["1985", "1989", "1995", "1998"],
@@ -311,14 +310,9 @@ CATEGORIES = [
                 "answer": 2,
             },
             {
-                "q": "Was hat Helga in ihrer Kindheit, gemeinsam mit ihrer Schwester Herta in Braunau in den Inn geworfen, weil sie es zu wenig gut kannte, und nicht wusste, dass das richtig gut ist?",
+                "q": "Was hat Helga in ihrer Kindheit, gemeinsam mit ihrer Schwester Herta in Braunau in den Inn geworfen, weil sie es zu wenig gut kannte?",
                 "options": ["Schnitzel", "Banane", "Handy", "eine Weintraube"],
-                "answer": 2,
-            },
-            {
-                "q": "Wann wurder VW Golf gekauft?",
-                "options": ["Hvar", "Toskana", "Sardinien", "Côte d'Azur"],
-                "answer": 3,
+                "answer": 1,
             },
             {
                 "q": "Was bestellte Jakob beim Cafe, wo ihr euch kennengelernt habt?",  # TODO bei opa nachfragen
@@ -338,7 +332,7 @@ CATEGORIES = [
             {
                 "q": "Welche Eismarke hatte Cafe Edtbauer?",
                 "options": ["Schöller", "Eskimo", "Langnese", "Cornetto"],
-                "answer": 2,
+                "answer": 0,
             },
             {
                 "q": "Mit was wurde das frischgemähte Heu gegen Regenfälle geschützt?",
@@ -574,6 +568,31 @@ def load_title_logo():
     else:
         print(f"[hint] missing image file: {path}")
     return None
+
+
+def load_question_picture(filename, max_w, max_h):
+    if not filename:
+        return None
+
+    path = os.path.join(ASSETS_DIR, filename)
+    if os.path.exists(path):
+        try:
+            img = pygame.image.load(path).convert_alpha()
+            iw, ih = img.get_size()
+            scale = min(max_w / iw, max_h / ih)
+            size = (max(1, int(iw * scale)), max(1, int(ih * scale)))
+            return pygame.transform.smoothscale(img, size)
+        except pygame.error as e:
+            print(f"Could not load question picture '{filename}': {e}")
+    else:
+        print(f"[hint] missing question picture: {path}")
+
+    surf = pygame.Surface((max_w, max_h), pygame.SRCALPHA)
+    surf.fill(PANEL_BLUE)
+    pygame.draw.rect(surf, MUTED_TEXT, surf.get_rect(), max(1, scaled(2)))
+    label = FONT_SMALL.render(f"add assets/{filename}", True, MUTED_TEXT)
+    surf.blit(label, label.get_rect(center=surf.get_rect().center))
+    return surf
 
 
 def load_sound(filename):
@@ -1590,8 +1609,19 @@ def question_screen(
 ):
     options = []
     letters = ["A", "B", "C", "D"]
-    opt_w, opt_h, gap = 880, 68, 16
-    start_y = 320
+    picture_name = question.get("picture") or question.get("image")
+    is_picture_question = question.get("type") in ("picture", "picutre") or bool(
+        picture_name
+    )
+    picture = (
+        load_question_picture(picture_name, scaled(500), scaled(210))
+        if is_picture_question
+        else None
+    )
+    opt_w = 880
+    opt_h = 56 if is_picture_question else 68
+    gap = 10 if is_picture_question else 16
+    start_y = 430 if is_picture_question else 320
     for i, text in enumerate(question["options"]):
         rect = ((WIDTH - opt_w) // 2, start_y + i * (opt_h + gap), opt_w, opt_h)
         options.append(OptionButton(rect, letters[i], text))
@@ -1614,14 +1644,33 @@ def question_screen(
         draw_divider(screen, 108, width=260)
         lines = wrap_text(question["q"], FONT_Q, WIDTH - 200)
         for i, line in enumerate(lines):
-            draw_centered_text(screen, line, FONT_Q, TEXT_LIGHT, 180 + i * 44)
+            line_y = (135 + i * 38) if is_picture_question else (180 + i * 44)
+            draw_centered_text(screen, line, FONT_Q, TEXT_LIGHT, line_y)
         if question.get("description"):
             desc_lines = wrap_text(question["description"], FONT_SMALL, WIDTH - 240)
-            desc_y = 180 + len(lines) * 44 + 8
+            desc_y = (
+                135 + len(lines) * 38 + 4
+                if is_picture_question
+                else 180 + len(lines) * 44 + 8
+            )
             for i, line in enumerate(desc_lines):
                 draw_centered_text(
                     screen, line, FONT_SMALL, MUTED_TEXT, desc_y + i * 22
                 )
+        if picture is not None:
+            pic_rect = picture.get_rect(center=(WIDTH // 2, scaled(290)))
+            frame = pic_rect.inflate(scaled(14), scaled(14))
+            pygame.draw.rect(
+                screen, PANEL_BLUE, frame, border_radius=scaled(10)
+            )
+            pygame.draw.rect(
+                screen,
+                SUCCESS_GREEN_LIGHT,
+                frame,
+                max(1, scaled(2)),
+                border_radius=scaled(10),
+            )
+            screen.blit(picture, pic_rect)
         for opt in options:
             opt.draw(screen)
         if revealed:
