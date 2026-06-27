@@ -23,6 +23,7 @@ import pygame
 # Optional: pip install opencv-python  (required for "type": "video" questions)
 try:
     import cv2 as _cv2
+
     _CV2_OK = True
 except ImportError:
     _cv2 = None
@@ -38,59 +39,66 @@ UI_SCALE = 1.0
 
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
 IMAGE_CANDIDATES = [
-    "oma.JPG", "oma.jpg", "oma.jpeg", "oma.png",
-    "klara.JPG", "klara.jpg", "klara.jpeg", "klara.png",
+    "oma.JPG",
+    "oma.jpg",
+    "oma.jpeg",
+    "oma.png",
+    "klara.JPG",
+    "klara.jpg",
+    "klara.jpeg",
+    "klara.png",
 ]
 
 # ---------- Sound files ----------
 # Each variable is just the filename inside the assets/ folder.
 # Swap them around as you like.
-SND_OPENING_THEME   = "opening_theme.mp3"    # Eröffnungsmelodie
-SND_INTRO           = "intro.mp3"            # Einleitung
-SND_CANDIDATE_ENTER = "candidate_enter.mp3"  # Kandidat kommt
-SND_ANSWER_LOCKIN   = "answer_lockin.mp3"    # Antwort einloggen
-SND_ANSWER_CORRECT  = "answer_correct.mp3"   # Antwort richtig
-SND_ANSWER_WRONG    = "answer_wrong.mp3"     # Antwort falsch
-SND_TIME_UP         = "time_up.mp3"          # Zeit vorbei
-SND_JOKER_50_50     = "joker_50_50.mp3"      # 50:50 Joker
-SND_JOKER_AUDIENCE  = "joker_audience.mp3"   # Publikumsjoker
-SND_JOKER_PHONE     = "joker_phone.mp3"      # Telefonjoker
+PATH_PREFIX = "sound/"
+SND_OPENING_THEME = PATH_PREFIX + "opening_theme.mp3"  # Eröffnungsmelodie
+SND_INTRO = PATH_PREFIX + "intro.mp3"  # Einleitung
+SND_CANDIDATE_ENTER = PATH_PREFIX + "candidate_enter.mp3"  # Kandidat kommt
+SND_ANSWER_LOCKIN = PATH_PREFIX + "answer_lockin.mp3"  # Antwort einloggen
+SND_ANSWER_CORRECT = PATH_PREFIX + "answer_correct.mp3"  # Antwort richtig
+SND_ANSWER_WRONG = PATH_PREFIX + "answer_wrong.mp3"  # Antwort falsch
+SND_TIME_UP = PATH_PREFIX + "time_up.mp3"  # Zeit vorbei
+SND_JOKER_50_50 = PATH_PREFIX + "joker_50_50.mp3"  # 50:50 Joker
+SND_JOKER_AUDIENCE = PATH_PREFIX + "joker_audience.mp3"  # Publikumsjoker
+SND_JOKER_PHONE = PATH_PREFIX + "joker_phone.mp3"  # Telefonjoker
 
 # Which sound plays before each question
 QUESTION_INTRO_SOUND = SND_INTRO
 # Which sound plays on the title screen (None = silent)
-TITLE_SOUND          = SND_OPENING_THEME
+TITLE_SOUND = SND_OPENING_THEME
 # Played on the first click (selection step)
-LOCKIN_SOUND         = SND_ANSWER_LOCKIN
+LOCKIN_SOUND = SND_ANSWER_LOCKIN
 # Played on the second click (reveal step)
-CORRECT_SOUND        = SND_ANSWER_CORRECT
-WRONG_SOUND          = SND_ANSWER_WRONG
+CORRECT_SOUND = SND_ANSWER_CORRECT
+WRONG_SOUND = SND_ANSWER_WRONG
 # Jokers
 JOKER_AUDIENCE_SOUND = SND_JOKER_AUDIENCE
-JOKER_PHONE_SOUND    = SND_JOKER_PHONE
-JOKER_50_50_SOUND    = SND_JOKER_50_50
+JOKER_PHONE_SOUND = SND_JOKER_PHONE
+JOKER_50_50_SOUND = SND_JOKER_50_50
 # Bars in the audience joker reveal only after this many total votes
-AUDIENCE_REVEAL_AT   = 5
+AUDIENCE_REVEAL_AT = 5
 
 # ---------- Millionenshow palette ----------
-STAGE_BLUE       = (9, 22, 56)        # deep studio blue
-PANEL_BLUE       = (17, 39, 85)       # dark panel blue
-TEXT_DARK        = (5, 22, 61)
-TEXT_LIGHT       = (246, 252, 255)
-SUCCESS_GREEN    = (0, 132, 92)       # muted quiz-show green
-SUCCESS_GREEN_DARK  = (0, 82, 67)
+STAGE_BLUE = (9, 22, 56)  # deep studio blue
+PANEL_BLUE = (17, 39, 85)  # dark panel blue
+TEXT_DARK = (5, 22, 61)
+TEXT_LIGHT = (246, 252, 255)
+SUCCESS_GREEN = (0, 132, 92)  # muted quiz-show green
+SUCCESS_GREEN_DARK = (0, 82, 67)
 SUCCESS_GREEN_LIGHT = (76, 194, 143)
-ANSWER_BLUE      = (31, 78, 154)      # rich answer blue
-DEEP_BLUE        = (10, 24, 70)
-ACCENT_BLUE      = (53, 121, 198)     # restrained blue accent
+ANSWER_BLUE = (31, 78, 154)  # rich answer blue
+DEEP_BLUE = (10, 24, 70)
+ACCENT_BLUE = (53, 121, 198)  # restrained blue accent
 ACCENT_BLUE_DARK = (25, 57, 129)
 ACCENT_BLUE_LIGHT = (108, 164, 226)
-GREEN_ACCENT     = (0, 150, 116)
-WHITE            = (246, 252, 255)
-GOLD             = (218, 231, 154)
-GOLD_LIGHT       = (245, 250, 215)
-MUTED_TEXT       = (135, 160, 196)
-WRONG_RED        = (150, 48, 74)
+GREEN_ACCENT = (0, 150, 116)
+WHITE = (246, 252, 255)
+GOLD = (218, 231, 154)
+GOLD_LIGHT = (245, 250, 215)
+MUTED_TEXT = (135, 160, 196)
+WRONG_RED = (150, 48, 74)
 
 # ---------- Quiz content — edit freely ----------
 # 4 categories × 5 questions. Question 1 = easiest, question 5 = hardest.
@@ -100,101 +108,266 @@ CATEGORIES = [
         "name": "Allgemeines",
         "color": SUCCESS_GREEN,
         "questions": [
-            {"q": "Wie viele Tage hat ein Schaltjahr?",
-                "options": ["364", "365", "366", "367"], "answer": 2},
-            {"q": "Wann wurde in Österreich offiziell der Euro eingeführt?",
-                "options": ["2000", "2001", "2002", "1999"], "answer": 2},
-            {"q": "In welchem Jahr fiel die Berliner Mauer?",
-             "options": ["1987", "1988", "1989", "1990"], "answer": 2},
-            {"q": "Wie heißt die Meeresströmung im Atlantik, die warmes Wasser aus dem Golf von Mexiko nach Europa transportiert?",
-             "options": ["Golfstrom", "Kuroshio", "Labradorstrom", "Canarystrom"], "answer": 0},
-            {"q": "Welcher Kontinent hat die meisten Einwohner?",
-             "options": ["Asien", "Afrika", "Europa", "Nordamerika"], "answer": 0},
-            {"q": "Woher hat der Flohmarkt seinen Namen?",
-                "options": ["Weil dort früher Flohfänger arbeiteten", "Weil auf den Märkten oft gebrauchte Kleidung mit Flöhen verkauft wurde", "Weil Flöhe dort als Haustiere gehandelt wurden", "Weil der Organisator des erste Flohmarktes Chuck Floh hieß"], "answer": 1},
-            {"q": "Welcher internationale Politiker wird 2026 auch 80 Jahre alt?",
-                "options": ["Heinz Fischer", "Angela Merkel", "Donald Trump", "Vladimir Putin"], "answer": 2},
-            {"q": "Welcher Planet ist der Sonne am nächsten?",
-                "options": ["Erde", "Merkur", "Mars", "Saturn"], "answer": 1},
-            {"q": "Welches Vitamin bildet der menschliche Körper hauptsächlich durch Sonnenlicht?",
-                "options": ["Vitamin A", "Vitamin B12", "Vitamin C", "Vitamin D"], "answer": 3},
-            {"q": "Wie nennt man den großen rotierenden Teil an der Vorderseite einer Tunnelbohrmaschine, der das Gestein abträgt?",
-             "options": ["Schildmantel", "Bohrkopf", "Hydraulikring", "Förderkammer"], "answer": 1},
-            {"q": "Wie breit ist die sogenannte Normalspur, die bei den meisten Eisenbahnstrecken in Europa verwendet wird?",
-             "options": ["1000 mm", "1435 mm", "1520mm", "1600 mm"], "answer": 1},
-            {"q": "Zu welchem Reich gehörte Triest über viele Jahrhunderte bis zum Ende des Ersten Weltkriegs?",
-                "options": ["Habsburgerreich / Österreich-Ungarn", "Osmanisches Reich", "Französisches Kaiserreich", "Byzantinisches Reich"], "answer": 0},
+            {
+                "q": "Wie viele Tage hat ein Schaltjahr?",
+                "options": ["364", "365", "366", "367"],
+                "answer": 2,
+            },
+            {
+                "q": "Wann wurde in Österreich offiziell der Euro eingeführt?",
+                "options": ["2000", "2001", "2002", "1999"],
+                "answer": 2,
+            },
+            {
+                "q": "In welchem Jahr fiel die Berliner Mauer?",
+                "options": ["1987", "1988", "1989", "1990"],
+                "answer": 2,
+            },
+            {
+                "q": "Wie heißt die Meeresströmung im Atlantik, die warmes Wasser aus dem Golf von Mexiko nach Europa transportiert?",
+                "options": ["Golfstrom", "Kuroshio", "Labradorstrom", "Canarystrom"],
+                "answer": 0,
+            },
+            {
+                "q": "Welcher Kontinent hat die meisten Einwohner?",
+                "options": ["Asien", "Afrika", "Europa", "Nordamerika"],
+                "answer": 0,
+            },
+            {
+                "q": "Woher hat der Flohmarkt seinen Namen?",
+                "options": [
+                    "Weil dort früher Flohfänger arbeiteten",
+                    "Weil auf den Märkten oft gebrauchte Kleidung mit Flöhen verkauft wurde",
+                    "Weil Flöhe dort als Haustiere gehandelt wurden",
+                    "Weil der Organisator des erste Flohmarktes Chuck Floh hieß",
+                ],
+                "answer": 1,
+            },
+            {
+                "q": "Welcher internationale Politiker wird 2026 auch 80 Jahre alt?",
+                "options": [
+                    "Heinz Fischer",
+                    "Angela Merkel",
+                    "Donald Trump",
+                    "Vladimir Putin",
+                ],
+                "answer": 2,
+            },
+            {
+                "q": "Welcher Planet ist der Sonne am nächsten?",
+                "options": ["Erde", "Merkur", "Mars", "Saturn"],
+                "answer": 1,
+            },
+            {
+                "q": "Welches Vitamin bildet der menschliche Körper hauptsächlich durch Sonnenlicht?",
+                "options": ["Vitamin A", "Vitamin B12", "Vitamin C", "Vitamin D"],
+                "answer": 3,
+            },
+            {
+                "q": "Wie nennt man den großen rotierenden Teil an der Vorderseite einer Tunnelbohrmaschine, der das Gestein abträgt?",
+                "options": [
+                    "Schildmantel",
+                    "Bohrkopf",
+                    "Hydraulikring",
+                    "Förderkammer",
+                ],
+                "answer": 1,
+            },
+            {
+                "q": "Wie breit ist die sogenannte Normalspur, die bei den meisten Eisenbahnstrecken in Europa verwendet wird?",
+                "options": ["1000 mm", "1435 mm", "1520mm", "1600 mm"],
+                "answer": 1,
+            },
+            {
+                "q": "Zu welchem Reich gehörte Triest über viele Jahrhunderte bis zum Ende des Ersten Weltkriegs?",
+                "options": [
+                    "Habsburgerreich / Österreich-Ungarn",
+                    "Osmanisches Reich",
+                    "Französisches Kaiserreich",
+                    "Byzantinisches Reich",
+                ],
+                "answer": 0,
+            },
         ],
     },
     {
         "name": "Nerd Stuff",
         "color": ANSWER_BLUE,
         "questions": [
-            {"q": "Welche Funktion hat Hefe im Teig?",
-             "options": ["Sie erhöht den Fettgehalt", "Sie sorgt für die Bräunung", "Sie bindet Wasser", "Sie produziert Gase und lockert den Teig"], "answer": 3},
-            {"q": "Wodurch entsteht die typische Blätterung eines Blätterteigs?",
-                "options": ["Durch wiederholtes Tourieren von Teig und Fett", "Durch Backpulver", "Durch besonders langes Kneten", "Durch Eiweiß"], "answer": 0},
-            {"q": "Was bewirkt das sogenannte „Blindbacken“?",
-                "options": ["Der Teig wird ohne Rezept hergestellt", "Der Boden wird ohne Belag vorgebacken", "Der Kuchen wird ohne Oberhitze gebacken", "Der Teig ruht im Dunkeln"], "answer": 1},
             {
-            "q": "Wie nennt man das gezielte Reduzieren von Maschen in einer Häkelarbeit?",
-            "options": ["Abnehmen", "Verkürzen", "Stauchen", "Zusammenziehen"],
-            "answer": 0
+                "q": "Welche Zutat sorgt bei Brandteig dafür, dass der Teig beim Backen stark aufgeht und innen hohl wird?",
+                "options": ["Backpulver", "Wasserdampf", "Hefe", "Natron"],
+                "answer": 1,
             },
             {
-            "q": "Welches Material wird traditionell besonders häufig für Topflappen verwendet?",
-            "options": ["Polyester", "Acryl", "Baumwolle", "Seide"],
-            "answer": 2
+                "q": "Welche Temperatur sollte geschmolzene Butter ungefähr haben, wenn sie unter geschlagenes Eiweiß gehoben wird, damit dieses nicht zusammenfällt?",
+                "options": ["Etwa 30 °C", "Etwa 60 °C", "Etwa 90 °C", "Direkt kochend"],
+                "answer": 0,
             },
-            {"q": "Im Buch \"Die kleine Hexe\": Wie heißt das große Hexenfest im Wald, bei dem alle Hexen zusammenkommen und feiern?",
-             "options": ["Mondzaubernacht", "Waldburgisnacht", "Hexenfeuerfest", "Zauberball"], "answer": 1},
-            {"q": "Was befindet sich im Kern von Hermine Grangers Zauberstab?",
-             "options": ["Einhornhaar", "Phönixfeder", "Drachenherzfaser", "Veela-Haar"], "answer": 2},
-            {"q": "Wie lautet der vollständige Name von Sirius Blacks Bruder?",
-             "options": ["Reginald Alphard Black", "Regulus Orion Black", "Rabastan Cygnus Black", "Regulus Arcturus Black"], "answer": 3},
+            {
+                "q": "Was bewirkt das sogenannte „Blindbacken“?",
+                "options": [
+                    "Der Teig wird ohne Rezept hergestellt",
+                    "Der Boden wird ohne Belag vorgebacken",
+                    "Der Kuchen wird ohne Oberhitze gebacken",
+                    "Der Teig ruht im Dunkeln",
+                ],
+                "answer": 1,
+            },
+            {
+                "q": "Was beschreibt in der Bäckerei der Begriff 'Autolyse'?",
+                "options": [
+                    "Das Ruhen von Mehl und Wasser vor dem Kneten",
+                    "Das Einfrieren des Teigs",
+                    "Das Gehenlassen nach dem Formen",
+                    "Das Backen mit Dampf",
+                ],
+                "answer": 0,
+            },
+            {
+                "q": "Wie nennt man das gezielte Reduzieren von Maschen in einer Häkelarbeit?",
+                "options": ["Abnehmen", "Verkürzen", "Stauchen", "Zusammenziehen"],
+                "answer": 0,
+            },
+            {
+                "q": 'Im Buch "Die kleine Hexe": Wie heißt das große Hexenfest im Wald, bei dem alle Hexen zusammenkommen und feiern?',
+                "options": [
+                    "Mondzaubernacht",
+                    "Waldburgisnacht",
+                    "Hexenfeuerfest",
+                    "Zauberball",
+                ],
+                "answer": 1,
+            },
+            {
+                "q": "Welche dieser Blumen gehört botanisch zur Familie der Korbblütler?",
+                "options": ["Zinnie", "Tulpe", "Lilie", "Narzisse"],
+                "answer": 0,
+            },
+            {
+                "q": "Warum schneidet man Zinnien für die Vase idealerweise am frühen Morgen?",
+                "options": [
+                    "Dann enthalten die Stängel besonders viel Wasser",
+                    "Dann sind die Blüten intensiver gefärbt",
+                    "Dann duften sie stärker",
+                    "Dann lassen sie sich leichter schneiden",
+                ],
+                "answer": 0,
+            },
+            {
+                "q": "Welcher Pflanzennährstoff ist hauptsächlich für die Blütenbildung verantwortlich?",
+                "options": ["Stickstoff", "Phosphor", "Schwefel", "Magnesium"],
+                "answer": 1,
+            },
         ],
     },
     {
         "name": "Persönliches",
         "color": ACCENT_BLUE,
         "questions": [
-            {"q": "Welches Modell war euer erstes gemeinsames Auto?",
-             "options": ["VW Käfer", "Ford 12M", "Opel Kadett", "Dacia Duster"], "answer": 1},
-            {"q": "Von welchem Getränk hast du immer getrunken wenn du in die Speis gegangen bist?",
-             "options": ["Bols", "Vodka", "Wein", "Korn"], "answer": 1}, #TODO Papa fragen
-            {"q": "In welcher Silvesternacht hast du Gerda nach Hause gefahren?",
-             "options": ["1985", "1989", "1995", "1998"], "answer": 1},
-             
-            {"q": "In welchem Jahr hat Klara Chi kennengelernt?",
-             "options": ["2000", "2001", "2002", "2003"], "answer": 2},
-            {"q": "In welchem Jahr ist Klara in ihre jetzige Wohnung gezogen?",
-             "options": ["2010", "2011", "2012", "2013"], "answer": 2},
-            {"q": "Um wie viel Uhr ist Klara geboren?",
-             "options": ["07:01", "06:59", "07:05", "06:57"], "answer": 0},
-            {"q": "Wie war der Name unseres ersten Katers?",
-             "options": ["Hera", "Henry", "Zeus", "Harald"], "answer": 2},
-            {"q": "Wo haben wir 2013 unsere Sommerurlaub gemacht?",
-             "options": ["Hvar", "Toskana", "Sardinien", "Côte d'Azur"], "answer": 3}
+            {
+                "q": "Welches Modell war euer erstes gemeinsames Auto?",
+                "options": ["VW Käfer", "Ford 12M", "Opel Kadett", "Peugeot 104"],
+                "answer": 1,
+            },
+            {
+                "q": "Von welchem Getränk hast du immer getrunken wenn du in die Speis gegangen bist?",
+                "options": ["Bols", "Vodka", "Wein", "Korn"],
+                "answer": 1,
+            },  # TODO Papa fragen
+            {
+                "q": "In welcher Silvesternacht hast du Gerda nach Hause gefahren?",
+                "options": ["1985", "1989", "1995", "1998"],
+                "answer": 1,
+            },
+            {
+                "q": "Welches Moped hatte Reini gegen ein Rennrad eingestauscht?",
+                "options": [
+                    "KTM Comet 50",
+                    "Puch MV50",
+                    "Zündapp GTS 50",
+                    "Puch Monza",
+                ],
+                "answer": 3,
+            },
+            {
+                "q": "Wo hättest du Jakobs Rasierer suchen müssen, als Jakob im Frühlings 2026 im Krankenhaus war?",
+                "options": [
+                    "bei Jakobs Computer",
+                    "unter Jakobs Bett",
+                    "im Badezimmer",
+                    "auf der Terrasse",
+                ],
+                "answer": 0,
+            },
+            {
+                "q": "Was sagte Thomas im Februar 1979, als Jakob von Salzburg nach Holzleiten heimkam, Klemens aber noch nicht geboren war?",
+                "options": [
+                    "das Baby wird super!",
+                    "mei, ich freu mich schon so auf das Baby",
+                    "jetzt ist das Scheißbaby noch immer nicht da!",
+                    "Wo ist Mutti?",
+                ],
+                "answer": 2,
+            },
+            {
+                "q": "Was hat Helga in ihrer Kindheit, gemeinsam mit ihrer Schwester Herta in Braunau in den Inn geworfen, weil sie es zu wenig gut kannte, und nicht wusste, dass das richtig gut ist?",
+                "options": ["Schnitzel", "Banane", "Handy", "eine Weintraube"],
+                "answer": 2,
+            },
+            {
+                "q": "Wann wurder VW Golf gekauft?",
+                "options": ["Hvar", "Toskana", "Sardinien", "Côte d'Azur"],
+                "answer": 3,
+            },
+            {
+                "q": "Was bestellte Jakob beim Cafe, wo ihr euch kennengelernt habt?",  # TODO bei opa nachfragen
+                "options": [
+                    "Sachertorte & Apfelsaft",
+                    "Cremeschnitte & Bier",
+                    "Topfenkuchen & Kaffee",
+                    "Apfelkuchen & Radler",
+                ],
+                "answer": 1,
+            },
+            {
+                "q": "Welche Zigarettenmarke rauchte Opa Max?",
+                "options": ["Malboro", "Memphis", "Smart", "Ernte"],
+                "answer": 2,
+            },
+            {
+                "q": "Welche Eismarke hatte Cafe Edtbauer?",
+                "options": ["Schöller", "Eskimo", "Langnese", "Cornetto"],
+                "answer": 2,
+            },
+            {
+                "q": "Mit was wurde das frischgemähte Heu gegen Regenfälle geschützt?",
+                "options": ["Stickstoff", "Heuhiefler", "Schwefel", "Magnesium"],
+                "answer": 1,
+            },
         ],
     },
     {
         "name": "Fun Stuff",
         "color": GREEN_ACCENT,
         "questions": [
-             {
+            {
                 "type": "ordering",
                 "q": "Ordne die Fotos chronologisch – von alt nach neu!",
                 "count": 14,
-                "photo_prefix": "foto_",   # expects assets/foto_1.jpg … foto_14.jpg
+                "photo_prefix": "foto_",  # expects assets/foto_1.jpg … foto_14.jpg
                 # correct order: photo numbers from left (oldest) to right (newest)
                 "answer": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-                "pass_at": 6,              # ≥6 correct positions = point
+                "pass_at": 6,  # ≥6 correct positions = point
             },
-            {"q": "In welchem Glas ist Alkohol?",
-             "description": "Diese Frage beantwortet jemand anders.",
-             "options": ["1.", "2.", "3.", "4."], "answer": 1,
-             "award_point_on_wrong": True,
-             "wrong_point_message": "Falsch - aber Klara bekommt dafür einen Punkt."},
+            {
+                "q": "In welchem Glas ist Alkohol?",
+                "description": "Diese Frage beantwortet jemand anders.",
+                "options": ["1.", "2.", "3.", "4."],
+                "answer": 1,
+                "award_point_on_wrong": True,
+                "wrong_point_message": "Falsch - aber Klara bekommt dafür einen Punkt.",
+            },
             {
                 "type": "audio_text",
                 "q": "Wie heißt dieser Song?",
@@ -210,41 +383,50 @@ CATEGORIES = [
             {
                 "type": "video",
                 "q": "Was macht Klara als nächstes?",
-                "video": "sturz.mp4",   # place in assets/
-                "audio": "sturz.mp3",   # optional: extracted audio (ffmpeg -i sturz.mp4 sturz.mp3)
-                "pause_at": 09.0,             # seconds where video freezes
-                "options": ["Läuft nochmal zur Kamera hin", "Macht einen Köpfler", "Läuft weiter", "Fällt hin"],
+                "video": "sturz.mp4",  # place in assets/
+                "audio": "sturz.mp3",  # optional: extracted audio (ffmpeg -i sturz.mp4 sturz.mp3)
+                "pause_at": 09.0,  # seconds where video freezes
+                "options": [
+                    "Läuft nochmal zur Kamera hin",
+                    "Macht einen Köpfler",
+                    "Läuft weiter",
+                    "Fällt hin",
+                ],
                 "answer": 3,
             },
             {
                 "type": "video",
                 "q": "Was macht Klara als nächstes?",
-                "video": "cam_schlag.mp4",   # place in assets/
-                "audio": "cam_schlag.mp3",   # optional: extracted audio (ffmpeg -i leck_mich.mp4 leck_mich.mp3)
-                "pause_at": 06.0,             # seconds where video freezes
-                "options": ["Erschrickt und Kreischt", "Erschrickt und schlägt die Kamera", "Erwartet die Kamera und erschrickt nicht", "Nimmt die Kamera in die Hand und filmt weiter"],
+                "video": "cam_schlag.mp4",  # place in assets/
+                "audio": "cam_schlag.mp3",  # optional: extracted audio (ffmpeg -i leck_mich.mp4 leck_mich.mp3)
+                "pause_at": 06.0,  # seconds where video freezes
+                "options": [
+                    "Erschrickt und Kreischt",
+                    "Erschrickt und schlägt die Kamera",
+                    "Erwartet die Kamera und erschrickt nicht",
+                    "Nimmt die Kamera in die Hand und filmt weiter",
+                ],
                 "answer": 1,
             },
             {
                 "type": "video",
                 "q": "Welches Buch von Dan Brown las Klara zu diesem Zeitpunkt?",
-                "video": "illuminati.mp4",   # place in assets/
-                "audio": "illuminati.mp3",   # optional: extracted audio (ffmpeg -i illuminati.mp4 illuminati.mp3)
-                "pause_at": 59.5,             # seconds where video freezes
-                "stop_at": 65.0,              # optional: seconds where video stops after answer
+                "video": "illuminati.mp4",  # place in assets/
+                "audio": "illuminati.mp3",  # optional: extracted audio (ffmpeg -i illuminati.mp4 illuminati.mp3)
+                "pause_at": 59.5,  # seconds where video freezes
+                "stop_at": 65.0,  # optional: seconds where video stops after answer
                 "options": ["Inferno", "Illuminati", "Der Da Vinci Code", "Sakrileg"],
                 "answer": 1,
             },
             {
                 "type": "video",
                 "q": "Was sagt Klara als nächstes?",
-                "video": "leck_mich.mp4",   # place in assets/
-                "audio": "leck_mich.mp3",   # optional: extracted audio (ffmpeg -i leck_mich.mp4 leck_mich.mp3)
-                "pause_at": 67.0,             # seconds where video freezes
+                "video": "leck_mich.mp4",  # place in assets/
+                "audio": "leck_mich.mp3",  # optional: extracted audio (ffmpeg -i leck_mich.mp4 leck_mich.mp3)
+                "pause_at": 67.0,  # seconds where video freezes
                 "options": ["Gute Nacht", "Nichts", "Sei Leise", "Leck mich"],
                 "answer": 3,
             },
-           
         ],
     },
 ]
@@ -263,6 +445,7 @@ def fun_stuff_unlocked(done):
         if category["name"] != FUN_STUFF_CATEGORY
     )
 
+
 # ---------- Pygame setup ----------
 pygame.init()
 pygame.mixer.init()
@@ -278,8 +461,14 @@ else:
     WIDTH, HEIGHT = BASE_WIDTH, BASE_HEIGHT
     UI_SCALE = 1.0
     display_flags = 0
-display_surface = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT), display_flags)
-screen = display_surface if (WIDTH, HEIGHT) == (DISPLAY_WIDTH, DISPLAY_HEIGHT) else pygame.Surface((WIDTH, HEIGHT))
+display_surface = pygame.display.set_mode(
+    (DISPLAY_WIDTH, DISPLAY_HEIGHT), display_flags
+)
+screen = (
+    display_surface
+    if (WIDTH, HEIGHT) == (DISPLAY_WIDTH, DISPLAY_HEIGHT)
+    else pygame.Surface((WIDTH, HEIGHT))
+)
 SCREEN_OFFSET_X = (DISPLAY_WIDTH - WIDTH) // 2
 SCREEN_OFFSET_Y = (DISPLAY_HEIGHT - HEIGHT) // 2
 pygame.display.set_caption("Oma's 80er Millionenshow")
@@ -299,8 +488,10 @@ def get_events():
     for event in pygame.event.get():
         if hasattr(event, "pos"):
             attrs = event.dict.copy()
-            attrs["pos"] = (event.pos[0] - SCREEN_OFFSET_X,
-                            event.pos[1] - SCREEN_OFFSET_Y)
+            attrs["pos"] = (
+                event.pos[0] - SCREEN_OFFSET_X,
+                event.pos[1] - SCREEN_OFFSET_Y,
+            )
             event = pygame.event.Event(event.type, attrs)
         events.append(event)
     return events
@@ -317,16 +508,17 @@ def update_display():
         display_surface.blit(screen, (SCREEN_OFFSET_X, SCREEN_OFFSET_Y))
     pygame.display.flip()
 
+
 # Bold TV-show typography.
 SERIF = "arial,helvetica,sans"
 FONT_TAGLINE = pygame.font.SysFont(SERIF, scaled_font(30), bold=True)
-FONT_TITLE   = pygame.font.SysFont(SERIF, scaled_font(68), bold=True)
-FONT_SUB     = pygame.font.SysFont(SERIF, scaled_font(26), bold=True)
-FONT_BTN     = pygame.font.SysFont(SERIF, scaled_font(26), bold=True)
-FONT_Q       = pygame.font.SysFont(SERIF, scaled_font(34), bold=True)
-FONT_OPT     = pygame.font.SysFont(SERIF, scaled_font(24))
-FONT_OPT_BD  = pygame.font.SysFont(SERIF, scaled_font(26), bold=True)
-FONT_SMALL   = pygame.font.SysFont(SERIF, scaled_font(18), bold=True)
+FONT_TITLE = pygame.font.SysFont(SERIF, scaled_font(68), bold=True)
+FONT_SUB = pygame.font.SysFont(SERIF, scaled_font(26), bold=True)
+FONT_BTN = pygame.font.SysFont(SERIF, scaled_font(26), bold=True)
+FONT_Q = pygame.font.SysFont(SERIF, scaled_font(34), bold=True)
+FONT_OPT = pygame.font.SysFont(SERIF, scaled_font(24))
+FONT_OPT_BD = pygame.font.SysFont(SERIF, scaled_font(26), bold=True)
+FONT_SMALL = pygame.font.SysFont(SERIF, scaled_font(18), bold=True)
 
 
 # ---------- Asset loading ----------
@@ -343,7 +535,9 @@ def load_portrait():
     surf = pygame.Surface((portrait_size, portrait_size), pygame.SRCALPHA)
     center = portrait_size // 2
     pygame.draw.circle(surf, PANEL_BLUE, (center, center), center - scaled(2))
-    pygame.draw.circle(surf, SUCCESS_GREEN, (center, center), center - scaled(2), max(1, scaled(2)))
+    pygame.draw.circle(
+        surf, SUCCESS_GREEN, (center, center), center - scaled(2), max(1, scaled(2))
+    )
     label = FONT_SMALL.render("add oma.jpg", True, MUTED_TEXT)
     surf.blit(label, label.get_rect(center=(center, center)))
     return surf
@@ -362,7 +556,9 @@ def load_title_photo(size):
     surf = pygame.Surface((size, size), pygame.SRCALPHA)
     center = size // 2
     pygame.draw.circle(surf, PANEL_BLUE, (center, center), center)
-    pygame.draw.circle(surf, ACCENT_BLUE_LIGHT, (center, center), center - scaled(2), max(1, scaled(2)))
+    pygame.draw.circle(
+        surf, ACCENT_BLUE_LIGHT, (center, center), center - scaled(2), max(1, scaled(2))
+    )
     label = FONT_SMALL.render("add oma.jpg", True, MUTED_TEXT)
     surf.blit(label, label.get_rect(center=(center, center)))
     return surf
@@ -394,17 +590,17 @@ def load_sound(filename):
     return None
 
 
-PORTRAIT      = load_portrait()
-TITLE_PHOTO   = load_title_photo(scaled(220))
-TITLE_LOGO    = load_title_logo()
-INTRO_SOUND   = load_sound(QUESTION_INTRO_SOUND)
-TITLE_MUSIC   = load_sound(TITLE_SOUND)
-LOCKIN_SFX          = load_sound(LOCKIN_SOUND)
-CORRECT_SFX         = load_sound(CORRECT_SOUND)
-WRONG_SFX           = load_sound(WRONG_SOUND)
-JOKER_AUDIENCE_SFX  = load_sound(JOKER_AUDIENCE_SOUND)
-JOKER_PHONE_SFX     = load_sound(JOKER_PHONE_SOUND)
-JOKER_50_50_SFX     = load_sound(JOKER_50_50_SOUND)
+PORTRAIT = load_portrait()
+TITLE_PHOTO = load_title_photo(scaled(220))
+TITLE_LOGO = load_title_logo()
+INTRO_SOUND = load_sound(QUESTION_INTRO_SOUND)
+TITLE_MUSIC = load_sound(TITLE_SOUND)
+LOCKIN_SFX = load_sound(LOCKIN_SOUND)
+CORRECT_SFX = load_sound(CORRECT_SOUND)
+WRONG_SFX = load_sound(WRONG_SOUND)
+JOKER_AUDIENCE_SFX = load_sound(JOKER_AUDIENCE_SOUND)
+JOKER_PHONE_SFX = load_sound(JOKER_PHONE_SOUND)
+JOKER_50_50_SFX = load_sound(JOKER_50_50_SOUND)
 CANDIDATE_ENTER_SFX = load_sound(SND_CANDIDATE_ENTER)
 TITLE_MUSIC_CHANNEL = None
 
@@ -450,8 +646,12 @@ def draw_studio_background(surf, emblem=False):
     if emblem:
         draw_millionenshow_emblem(surf, cx, cy + scaled(8), scaled(230), alpha=42)
 
-    pygame.draw.rect(surf, ACCENT_BLUE_DARK, (24, 24, WIDTH - 48, HEIGHT - 48), 2, border_radius=18)
-    pygame.draw.rect(surf, ACCENT_BLUE_LIGHT, (34, 34, WIDTH - 68, HEIGHT - 68), 1, border_radius=14)
+    pygame.draw.rect(
+        surf, ACCENT_BLUE_DARK, (24, 24, WIDTH - 48, HEIGHT - 48), 2, border_radius=18
+    )
+    pygame.draw.rect(
+        surf, ACCENT_BLUE_LIGHT, (34, 34, WIDTH - 68, HEIGHT - 68), 1, border_radius=14
+    )
 
 
 def draw_millionenshow_emblem(surf, cx, cy, radius, alpha=220, title_text=""):
@@ -462,8 +662,13 @@ def draw_millionenshow_emblem(surf, cx, cy, radius, alpha=220, title_text=""):
 
     pygame.draw.circle(layer, (2, 8, 38, alpha), (ox, oy), radius)
     pygame.draw.circle(layer, (19, 42, 118, alpha), (ox, oy), radius, max(1, scaled(6)))
-    pygame.draw.circle(layer, (42, 96, 150, min(255, alpha + 16)), (ox, oy),
-                       radius + scaled(3), max(1, scaled(1)))
+    pygame.draw.circle(
+        layer,
+        (42, 96, 150, min(255, alpha + 16)),
+        (ox, oy),
+        radius + scaled(3),
+        max(1, scaled(1)),
+    )
 
     inner_r = int(radius * 0.64)
     loops = 10
@@ -473,19 +678,32 @@ def draw_millionenshow_emblem(surf, cx, cy, radius, alpha=220, title_text=""):
         y1 = oy + math.sin(angle) * inner_r
         x2 = ox + math.cos(angle + math.pi * 0.78) * inner_r
         y2 = oy + math.sin(angle + math.pi * 0.78) * inner_r
-        pygame.draw.line(layer, (130, 205, 255, min(255, alpha + 18)),
-                         (x1, y1), (x2, y2), max(1, scaled(1)))
+        pygame.draw.line(
+            layer,
+            (130, 205, 255, min(255, alpha + 18)),
+            (x1, y1),
+            (x2, y2),
+            max(1, scaled(1)),
+        )
         x3 = ox + math.cos(angle + math.pi * 0.22) * inner_r
         y3 = oy + math.sin(angle + math.pi * 0.22) * inner_r
-        pygame.draw.line(layer, (76, 194, 143, min(255, alpha + 16)),
-                         (x1, y1), (x3, y3), max(1, scaled(2)))
+        pygame.draw.line(
+            layer,
+            (76, 194, 143, min(255, alpha + 16)),
+            (x1, y1),
+            (x3, y3),
+            max(1, scaled(2)),
+        )
 
     for i in range(10):
         angle = 2 * math.pi * i / 10 + math.pi / 10
         x = ox + math.cos(angle) * (radius - scaled(20))
         y = oy + math.sin(angle) * (radius - scaled(20))
-        pygame.draw.rect(layer, (218, 231, 154, min(255, alpha + 22)),
-                         (x - scaled(3), y - scaled(3), scaled(6), scaled(6)))
+        pygame.draw.rect(
+            layer,
+            (218, 231, 154, min(255, alpha + 22)),
+            (x - scaled(3), y - scaled(3), scaled(6), scaled(6)),
+        )
 
     if title_text:
         text = FONT_TITLE.render(title_text, True, WHITE)
@@ -499,8 +717,13 @@ def draw_millionenshow_emblem(surf, cx, cy, radius, alpha=220, title_text=""):
 def draw_string_lights(surf, y_anchor=28, sag=22, bulbs=14):
     """Subtle top stage line."""
     x_start, x_end = scaled(70), WIDTH - scaled(70)
-    pygame.draw.line(surf, ACCENT_BLUE_DARK, (x_start, scaled(y_anchor)),
-                     (x_end, scaled(y_anchor)), max(1, scaled(2)))
+    pygame.draw.line(
+        surf,
+        ACCENT_BLUE_DARK,
+        (x_start, scaled(y_anchor)),
+        (x_end, scaled(y_anchor)),
+        max(1, scaled(2)),
+    )
 
 
 def draw_leaf(surf, cx, cy, angle_deg, length=22, width=9, color=SUCCESS_GREEN):
@@ -550,11 +773,21 @@ def draw_show_bar(surf, cx, cy, w=110, h=16):
     w, h = scaled(w), scaled(h)
     x = cx - w // 2
     pygame.draw.rect(surf, DEEP_BLUE, (x, cy - h // 2, w, h), border_radius=scaled(8))
-    pygame.draw.rect(surf, ACCENT_BLUE, (x + scaled(8), cy - h // 2 + scaled(3),
-                                    w - scaled(16), h - scaled(6)), border_radius=scaled(6))
-    pygame.draw.rect(surf, SUCCESS_GREEN, (x + w // 2 - scaled(18), cy - h // 2,
-                                         scaled(36), h), border_radius=scaled(6))
-    pygame.draw.rect(surf, WHITE, (x, cy - h // 2, w, h), max(1, scaled(1)), border_radius=scaled(8))
+    pygame.draw.rect(
+        surf,
+        ACCENT_BLUE,
+        (x + scaled(8), cy - h // 2 + scaled(3), w - scaled(16), h - scaled(6)),
+        border_radius=scaled(6),
+    )
+    pygame.draw.rect(
+        surf,
+        SUCCESS_GREEN,
+        (x + w // 2 - scaled(18), cy - h // 2, scaled(36), h),
+        border_radius=scaled(6),
+    )
+    pygame.draw.rect(
+        surf, WHITE, (x, cy - h // 2, w, h), max(1, scaled(1)), border_radius=scaled(8)
+    )
 
 
 def draw_divider(surf, y, width=240):
@@ -565,8 +798,20 @@ def draw_divider(surf, y, width=240):
 
 def draw_divider_px(surf, y, width=240):
     cx = WIDTH // 2
-    pygame.draw.line(surf, ACCENT_BLUE_LIGHT, (cx - width // 2, y), (cx - scaled(26), y), max(1, scaled(2)))
-    pygame.draw.line(surf, ACCENT_BLUE_LIGHT, (cx + scaled(26), y), (cx + width // 2, y), max(1, scaled(2)))
+    pygame.draw.line(
+        surf,
+        ACCENT_BLUE_LIGHT,
+        (cx - width // 2, y),
+        (cx - scaled(26), y),
+        max(1, scaled(2)),
+    )
+    pygame.draw.line(
+        surf,
+        ACCENT_BLUE_LIGHT,
+        (cx + scaled(26), y),
+        (cx + width // 2, y),
+        max(1, scaled(2)),
+    )
     draw_stage_accent(surf, cx, y, r=scaled(10))
 
 
@@ -593,15 +838,19 @@ class Button:
 
     def draw(self, surf):
         base = ANSWER_BLUE if self.primary else ACCENT_BLUE
-        hi   = DEEP_BLUE if self.primary else ACCENT_BLUE_DARK
+        hi = DEEP_BLUE if self.primary else ACCENT_BLUE_DARK
         color = hi if self.hover else base
         pygame.draw.rect(surf, color, self.rect, border_radius=scaled(14))
-        pygame.draw.rect(surf, TEXT_LIGHT,   self.rect, max(1, scaled(1)), border_radius=scaled(14))
+        pygame.draw.rect(
+            surf, TEXT_LIGHT, self.rect, max(1, scaled(1)), border_radius=scaled(14)
+        )
         # small stage-light accents on the sides
-        draw_stage_accent(surf, self.rect.x + scaled(30), self.rect.centery,
-                          r=scaled(8))
-        draw_stage_accent(surf, self.rect.right - scaled(30), self.rect.centery,
-                          r=scaled(8))
+        draw_stage_accent(
+            surf, self.rect.x + scaled(30), self.rect.centery, r=scaled(8)
+        )
+        draw_stage_accent(
+            surf, self.rect.right - scaled(30), self.rect.centery, r=scaled(8)
+        )
         txt = FONT_BTN.render(self.label, True, WHITE)
         surf.blit(txt, txt.get_rect(center=self.rect.center))
 
@@ -632,38 +881,54 @@ class OptionButton:
     def draw(self, surf):
         if self.state == "eliminated":
             pygame.draw.rect(surf, DEEP_BLUE, self.rect, border_radius=scaled(12))
-            pygame.draw.rect(surf, ACCENT_BLUE_DARK, self.rect, max(1, scaled(1)), border_radius=scaled(12))
+            pygame.draw.rect(
+                surf,
+                ACCENT_BLUE_DARK,
+                self.rect,
+                max(1, scaled(1)),
+                border_radius=scaled(12),
+            )
             return
         if self.state == "correct":
-            fill, border, fg, badge_fg = SUCCESS_GREEN,         SUCCESS_GREEN_DARK, WHITE, WHITE
+            fill, border, fg, badge_fg = SUCCESS_GREEN, SUCCESS_GREEN_DARK, WHITE, WHITE
         elif self.state == "wrong":
-            fill, border, fg, badge_fg = WRONG_RED,     DEEP_BLUE,   WHITE, WHITE
+            fill, border, fg, badge_fg = WRONG_RED, DEEP_BLUE, WHITE, WHITE
         elif self.state == "dimmed":
-            fill, border, fg, badge_fg = PANEL_BLUE, MUTED_TEXT,     MUTED_TEXT,       MUTED_TEXT
+            fill, border, fg, badge_fg = PANEL_BLUE, MUTED_TEXT, MUTED_TEXT, MUTED_TEXT
         elif self.state == "selected":
-            fill, border, fg, badge_fg = ACCENT_BLUE,        ACCENT_BLUE_LIGHT, WHITE, WHITE
+            fill, border, fg, badge_fg = ACCENT_BLUE, ACCENT_BLUE_LIGHT, WHITE, WHITE
         else:
-            fill   = ANSWER_BLUE if not self.hover else ACCENT_BLUE_DARK
+            fill = ANSWER_BLUE if not self.hover else ACCENT_BLUE_DARK
             border = ACCENT_BLUE_LIGHT if not self.hover else SUCCESS_GREEN_LIGHT
-            fg     = WHITE
+            fg = WHITE
             badge_fg = GOLD if not self.hover else SUCCESS_GREEN_LIGHT
         border_w = scaled(3) if self.state == "selected" else scaled(2)
         pygame.draw.rect(surf, fill, self.rect, border_radius=scaled(12))
-        pygame.draw.rect(surf, border, self.rect, max(1, border_w), border_radius=scaled(12))
+        pygame.draw.rect(
+            surf, border, self.rect, max(1, border_w), border_radius=scaled(12)
+        )
 
         # letter badge (circle)
         bx = self.rect.x + scaled(38)
         by = self.rect.centery
-        pygame.draw.circle(surf, DEEP_BLUE if self.state == "idle" else fill, (bx, by), scaled(20))
+        pygame.draw.circle(
+            surf, DEEP_BLUE if self.state == "idle" else fill, (bx, by), scaled(20)
+        )
         pygame.draw.circle(surf, badge_fg, (bx, by), scaled(20), max(1, scaled(2)))
         letter_surf = FONT_OPT_BD.render(self.letter, True, badge_fg)
         surf.blit(letter_surf, letter_surf.get_rect(center=(bx, by - scaled(1))))
 
         text_surf = FONT_OPT.render(self.text, True, fg)
-        surf.blit(text_surf, (self.rect.x + scaled(78), self.rect.centery - text_surf.get_height() // 2))
+        surf.blit(
+            text_surf,
+            (self.rect.x + scaled(78), self.rect.centery - text_surf.get_height() // 2),
+        )
 
     def handle(self, event):
-        if self.state not in ("idle", "selected", "correct") or self.state == "eliminated":
+        if (
+            self.state not in ("idle", "selected", "correct")
+            or self.state == "eliminated"
+        ):
             return False
         if event.type == pygame.MOUSEMOTION:
             self.hover = self.rect.collidepoint(event.pos)
@@ -691,8 +956,12 @@ def draw_portrait_framed(surf, center):
     # double frame: outer green, inner cyan
     outer = rect.inflate(scaled(22), scaled(22))
     inner = rect.inflate(scaled(10), scaled(10))
-    pygame.draw.rect(surf, SUCCESS_GREEN,    outer, max(1, scaled(2)), border_radius=scaled(10))
-    pygame.draw.rect(surf, SUCCESS_GREEN_LIGHT, inner, max(1, scaled(1)), border_radius=scaled(8))
+    pygame.draw.rect(
+        surf, SUCCESS_GREEN, outer, max(1, scaled(2)), border_radius=scaled(10)
+    )
+    pygame.draw.rect(
+        surf, SUCCESS_GREEN_LIGHT, inner, max(1, scaled(1)), border_radius=scaled(8)
+    )
     surf.blit(PORTRAIT, rect)
 
 
@@ -700,8 +969,12 @@ def draw_show_title_emblem(surf, cx, cy):
     photo_size = scaled(275)
     photo = pygame.transform.smoothscale(TITLE_PHOTO, (photo_size, photo_size))
     masked = pygame.Surface((photo_size, photo_size), pygame.SRCALPHA)
-    pygame.draw.circle(masked, (255, 255, 255, 255),
-                       (photo_size // 2, photo_size // 2), photo_size // 2)
+    pygame.draw.circle(
+        masked,
+        (255, 255, 255, 255),
+        (photo_size // 2, photo_size // 2),
+        photo_size // 2,
+    )
     masked.blit(photo, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
 
     rect = masked.get_rect(center=(cx, cy))
@@ -710,15 +983,19 @@ def draw_show_title_emblem(surf, cx, cy):
 
 # ---------- Screens ----------
 def title_screen():
-    btn = Button((WIDTH // 2 - 200, HEIGHT - 130, 400, 68), "Start the Game", primary=True)
+    btn = Button(
+        (WIDTH // 2 - 200, HEIGHT - 130, 400, 68), "Start the Game", primary=True
+    )
     start_title_music()
 
     while True:
         for event in get_events():
             if event.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if btn.handle(event):
                 return
 
@@ -741,8 +1018,16 @@ def play_intro_sound():
         for _ in range(36):
             draw_studio_background(screen)
             draw_corner_decorations(screen)
-            draw_centered_text_px(screen, "♪  ♪  ♪", FONT_TITLE, ANSWER_BLUE, HEIGHT // 2 - scaled(20))
-            draw_centered_text_px(screen, "(add assets/millionaire.mp3)", FONT_SMALL, MUTED_TEXT, HEIGHT // 2 + scaled(50))
+            draw_centered_text_px(
+                screen, "♪  ♪  ♪", FONT_TITLE, ANSWER_BLUE, HEIGHT // 2 - scaled(20)
+            )
+            draw_centered_text_px(
+                screen,
+                "(add assets/millionaire.mp3)",
+                FONT_SMALL,
+                MUTED_TEXT,
+                HEIGHT // 2 + scaled(50),
+            )
             update_display()
             clock.tick(FPS)
         return
@@ -752,7 +1037,8 @@ def play_intro_sound():
     while pygame.time.get_ticks() - start < 1500:
         for event in get_events():
             if event.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
         draw_studio_background(screen)
         draw_corner_decorations(screen)
         draw_centered_text_px(screen, "♪", FONT_TITLE, ANSWER_BLUE, HEIGHT // 2)
@@ -778,30 +1064,29 @@ def wrap_text(text, font, max_width):
 
 # ---------- Joker system ----------
 
-_JOKER_RADIUS  = scaled(31)
+_JOKER_RADIUS = scaled(31)
 _JOKER_CENTERS = [
-    (WIDTH - scaled(254), scaled(72)),   # index 0 — Publikum
-    (WIDTH - scaled(188), scaled(72)),   # index 1 — Gatte
-    (WIDTH - scaled(122), scaled(72)),   # index 2 — Kinder
-    (WIDTH - scaled(56),  scaled(72)),   # index 3 — 50:50
+    (WIDTH - scaled(254), scaled(72)),  # index 0 — Publikum
+    (WIDTH - scaled(188), scaled(72)),  # index 1 — Gatte
+    (WIDTH - scaled(122), scaled(72)),  # index 2 — Kinder
+    (WIDTH - scaled(56), scaled(72)),  # index 3 — 50:50
 ]
-_JOKER_COLORS  = [SUCCESS_GREEN, ACCENT_BLUE, GREEN_ACCENT, ANSWER_BLUE]
-_JOKER_LABELS  = ["PUB", "GATTE", "KIDS", "50:50"]
+_JOKER_COLORS = [SUCCESS_GREEN, ACCENT_BLUE, GREEN_ACCENT, ANSWER_BLUE]
+_JOKER_LABELS = ["PUB", "GATTE", "KIDS", "50:50"]
 
 
 def draw_joker_icons(surf, used):
     for i, (cx, cy) in enumerate(_JOKER_CENTERS):
         active = not used[i]
-        color  = _JOKER_COLORS[i] if active else MUTED_TEXT
-        pygame.draw.circle(surf, color,     (cx, cy), _JOKER_RADIUS)
+        color = _JOKER_COLORS[i] if active else MUTED_TEXT
+        pygame.draw.circle(surf, color, (cx, cy), _JOKER_RADIUS)
         pygame.draw.circle(surf, STAGE_BLUE, (cx, cy), _JOKER_RADIUS, 1)
-        lbl = FONT_SMALL.render(_JOKER_LABELS[i], True,
-                                WHITE if active else PANEL_BLUE)
+        lbl = FONT_SMALL.render(_JOKER_LABELS[i], True, WHITE if active else PANEL_BLUE)
         surf.blit(lbl, lbl.get_rect(center=(cx, cy)))
         if not active:
             d = _JOKER_RADIUS - 8
-            pygame.draw.line(surf, PANEL_BLUE, (cx-d, cy-d), (cx+d, cy+d), 2)
-            pygame.draw.line(surf, PANEL_BLUE, (cx+d, cy-d), (cx-d, cy+d), 2)
+            pygame.draw.line(surf, PANEL_BLUE, (cx - d, cy - d), (cx + d, cy + d), 2)
+            pygame.draw.line(surf, PANEL_BLUE, (cx + d, cy - d), (cx - d, cy + d), 2)
 
 
 def joker_clicked(event):
@@ -821,11 +1106,21 @@ def draw_modal_base(surf, height=420):
     surf.blit(veil, (0, 0))
     pw, ph = scaled(760), scaled(height)
     px, py = (WIDTH - pw) // 2, (HEIGHT - ph) // 2
-    pygame.draw.rect(surf, STAGE_BLUE,    (px, py, pw, ph), border_radius=scaled(18))
-    pygame.draw.rect(surf, SUCCESS_GREEN,        (px, py, pw, ph), max(1, scaled(2)), border_radius=scaled(18))
-    pygame.draw.rect(surf, SUCCESS_GREEN_LIGHT,  (px + scaled(7), py + scaled(7),
-                                          pw - scaled(14), ph - scaled(14)),
-                     max(1, scaled(1)), border_radius=scaled(13))
+    pygame.draw.rect(surf, STAGE_BLUE, (px, py, pw, ph), border_radius=scaled(18))
+    pygame.draw.rect(
+        surf,
+        SUCCESS_GREEN,
+        (px, py, pw, ph),
+        max(1, scaled(2)),
+        border_radius=scaled(18),
+    )
+    pygame.draw.rect(
+        surf,
+        SUCCESS_GREEN_LIGHT,
+        (px + scaled(7), py + scaled(7), pw - scaled(14), ph - scaled(14)),
+        max(1, scaled(1)),
+        border_radius=scaled(13),
+    )
     return px, py, pw, ph
 
 
@@ -834,65 +1129,122 @@ def show_publikum_joker(surf_behind):
     if JOKER_AUDIENCE_SFX:
         JOKER_AUDIENCE_SFX.play()
 
-    votes   = [0, 0, 0, 0]
+    votes = [0, 0, 0, 0]
     letters = ["A", "B", "C", "D"]
-    btn     = None
+    btn = None
 
     while True:
         for event in get_events():
             if event.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key in (pygame.K_1, pygame.K_KP1): votes[0] += 1
-                if event.key in (pygame.K_2, pygame.K_KP2): votes[1] += 1
-                if event.key in (pygame.K_3, pygame.K_KP3): votes[2] += 1
-                if event.key in (pygame.K_4, pygame.K_KP4): votes[3] += 1
+                if event.key in (pygame.K_1, pygame.K_KP1):
+                    votes[0] += 1
+                if event.key in (pygame.K_2, pygame.K_KP2):
+                    votes[1] += 1
+                if event.key in (pygame.K_3, pygame.K_KP3):
+                    votes[2] += 1
+                if event.key in (pygame.K_4, pygame.K_KP4):
+                    votes[3] += 1
             if btn is not None and btn.handle(event):
                 return
 
         screen.blit(surf_behind, (0, 0))
         px, py, pw, ph = draw_modal_base(screen, height=470)
         if btn is None:
-            btn = Button((BASE_WIDTH // 2 - 130, BASE_HEIGHT // 2 + 185,
-                          260, 58), "Fertig!", primary=True)
+            btn = Button(
+                (BASE_WIDTH // 2 - 130, BASE_HEIGHT // 2 + 185, 260, 58),
+                "Fertig!",
+                primary=True,
+            )
 
-        draw_centered_text_px(screen, "Publikums-Joker", FONT_Q, TEXT_LIGHT, py + scaled(52))
+        draw_centered_text_px(
+            screen, "Publikums-Joker", FONT_Q, TEXT_LIGHT, py + scaled(52)
+        )
         draw_divider_px(screen, py + scaled(78), width=scaled(200))
 
-        total    = sum(votes)
+        total = sum(votes)
         revealed = total >= AUDIENCE_REVEAL_AT
 
         if not revealed:
-            draw_centered_text_px(screen, "Drückt 1, 2, 3 oder 4 zum Abstimmen!",
-                                  FONT_SUB, SUCCESS_GREEN_DARK, py + scaled(115))
-            draw_centered_text_px(screen,
-                                  f"{total} Stimme{'n' if total != 1 else ''} abgegeben",
-                                  FONT_SMALL, MUTED_TEXT, py + scaled(158))
+            draw_centered_text_px(
+                screen,
+                "Drückt 1, 2, 3 oder 4 zum Abstimmen!",
+                FONT_SUB,
+                SUCCESS_GREEN_DARK,
+                py + scaled(115),
+            )
+            draw_centered_text_px(
+                screen,
+                f"{total} Stimme{'n' if total != 1 else ''} abgegeben",
+                FONT_SMALL,
+                MUTED_TEXT,
+                py + scaled(158),
+            )
             dots = "." * ((pygame.time.get_ticks() // 500) % 4)
-            draw_centered_text_px(screen, f"Warte auf Stimmen{dots}",
-                                  FONT_SMALL, MUTED_TEXT, py + scaled(184))
+            draw_centered_text_px(
+                screen,
+                f"Warte auf Stimmen{dots}",
+                FONT_SMALL,
+                MUTED_TEXT,
+                py + scaled(184),
+            )
         else:
-            draw_centered_text_px(screen, "Drückt 1, 2, 3 oder 4 zum Abstimmen!",
-                                  FONT_SMALL, MUTED_TEXT, py + scaled(98))
-            bar_x      = px + scaled(120)
-            bar_max_w  = pw - scaled(260)
+            draw_centered_text_px(
+                screen,
+                "Drückt 1, 2, 3 oder 4 zum Abstimmen!",
+                FONT_SMALL,
+                MUTED_TEXT,
+                py + scaled(98),
+            )
+            bar_x = px + scaled(120)
+            bar_max_w = pw - scaled(260)
             bar_h, gap = scaled(34), scaled(13)
-            bar_start  = py + scaled(122)
+            bar_start = py + scaled(122)
             for i in range(4):
-                by  = bar_start + i * (bar_h + gap)
+                by = bar_start + i * (bar_h + gap)
                 pct = votes[i] / total
                 filled = int(bar_max_w * pct)
                 lbl = FONT_OPT_BD.render(letters[i], True, SUCCESS_GREEN_DARK)
-                screen.blit(lbl, (bar_x - scaled(50), by + bar_h//2 - lbl.get_height()//2))
-                pygame.draw.rect(screen, PANEL_BLUE, (bar_x, by, bar_max_w, bar_h), border_radius=scaled(8))
+                screen.blit(
+                    lbl, (bar_x - scaled(50), by + bar_h // 2 - lbl.get_height() // 2)
+                )
+                pygame.draw.rect(
+                    screen,
+                    PANEL_BLUE,
+                    (bar_x, by, bar_max_w, bar_h),
+                    border_radius=scaled(8),
+                )
                 if filled > 0:
-                    pygame.draw.rect(screen, SUCCESS_GREEN, (bar_x, by, filled, bar_h), border_radius=scaled(8))
-                pygame.draw.rect(screen, SUCCESS_GREEN_DARK, (bar_x, by, bar_max_w, bar_h), max(1, scaled(1)), border_radius=scaled(8))
+                    pygame.draw.rect(
+                        screen,
+                        SUCCESS_GREEN,
+                        (bar_x, by, filled, bar_h),
+                        border_radius=scaled(8),
+                    )
+                pygame.draw.rect(
+                    screen,
+                    SUCCESS_GREEN_DARK,
+                    (bar_x, by, bar_max_w, bar_h),
+                    max(1, scaled(1)),
+                    border_radius=scaled(8),
+                )
                 pct_lbl = FONT_SMALL.render(f"{round(pct*100)} %", True, TEXT_LIGHT)
-                screen.blit(pct_lbl, (bar_x + bar_max_w + scaled(10),
-                                      by + bar_h//2 - pct_lbl.get_height()//2))
-            draw_centered_text_px(screen, f"{total} Stimmen abgegeben",
-                                  FONT_SMALL, MUTED_TEXT, btn.rect.y - scaled(16))
+                screen.blit(
+                    pct_lbl,
+                    (
+                        bar_x + bar_max_w + scaled(10),
+                        by + bar_h // 2 - pct_lbl.get_height() // 2,
+                    ),
+                )
+            draw_centered_text_px(
+                screen,
+                f"{total} Stimmen abgegeben",
+                FONT_SMALL,
+                MUTED_TEXT,
+                btn.rect.y - scaled(16),
+            )
 
         btn.draw(screen)
         update_display()
@@ -904,24 +1256,33 @@ def show_parent_joker(surf_behind, joker_name, prompt):
     if JOKER_PHONE_SFX:
         JOKER_PHONE_SFX.play()
 
-    btn = Button((WIDTH // 2 - 160, HEIGHT // 2 + 110, 320, 58),
-                 "Fertig", primary=False)
+    btn = Button(
+        (WIDTH // 2 - 160, HEIGHT // 2 + 110, 320, 58), "Fertig", primary=False
+    )
 
     while True:
         for event in get_events():
             if event.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if btn.handle(event):
                 return
 
         screen.blit(surf_behind, (0, 0))
         px, py, pw, ph = draw_modal_base(screen)
 
-        draw_centered_text_px(screen, f"{joker_name}-Joker", FONT_Q, TEXT_LIGHT, py + scaled(52))
+        draw_centered_text_px(
+            screen, f"{joker_name}-Joker", FONT_Q, TEXT_LIGHT, py + scaled(52)
+        )
         draw_divider_px(screen, py + scaled(78), width=scaled(200))
         draw_centered_text_px(screen, prompt, FONT_TITLE, TEXT_LIGHT, py + scaled(170))
-        draw_centered_text_px(screen, "(und dann schnell antworten)",
-                              FONT_SMALL, MUTED_TEXT, py + scaled(228))
+        draw_centered_text_px(
+            screen,
+            "(und dann schnell antworten)",
+            FONT_SMALL,
+            MUTED_TEXT,
+            py + scaled(228),
+        )
 
         btn.draw(screen)
         update_display()
@@ -944,9 +1305,11 @@ def info_screen():
     while True:
         for event in get_events():
             if event.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if btn.handle(event):
                 return
 
@@ -958,23 +1321,35 @@ def info_screen():
         draw_divider(screen, 148, width=220)
 
         # Game structure
-        draw_centered_text(screen,
+        draw_centered_text(
+            screen,
             f"{len(CATEGORIES)} Kategorien · {sum(len(c['questions']) for c in CATEGORIES)} Fragen · von leicht bis schwer",
-            FONT_SUB, ACCENT_BLUE_LIGHT, 188)
-        draw_centered_text(screen,
+            FONT_SUB,
+            ACCENT_BLUE_LIGHT,
+            188,
+        )
+        draw_centered_text(
+            screen,
             "Du wählst die Reihenfolge der Kategorien selbst.",
-            FONT_SUB, TEXT_LIGHT, 224)
+            FONT_SUB,
+            TEXT_LIGHT,
+            224,
+        )
 
         # Joker explanation — centred columns (icon on top, text below)
         circle_y = scaled(308)
-        label_y  = scaled(352)
-        desc_y   = scaled(378)
-        block_cxs = [WIDTH // 2 - scaled(315), WIDTH // 2 - scaled(105),
-                     WIDTH // 2 + scaled(105), WIDTH // 2 + scaled(315)]
-        labels  = ["PUB",      "GATTE",      "KIDS",       "50:50"]
-        colors  = [SUCCESS_GREEN,      ACCENT_BLUE,       GREEN_ACCENT, ANSWER_BLUE]
-        titles  = ["Publikum", "Gatte",      "Kinder",     "50 : 50"]
-        descs   = [
+        label_y = scaled(352)
+        desc_y = scaled(378)
+        block_cxs = [
+            WIDTH // 2 - scaled(315),
+            WIDTH // 2 - scaled(105),
+            WIDTH // 2 + scaled(105),
+            WIDTH // 2 + scaled(315),
+        ]
+        labels = ["PUB", "GATTE", "KIDS", "50:50"]
+        colors = [SUCCESS_GREEN, ACCENT_BLUE, GREEN_ACCENT, ANSWER_BLUE]
+        titles = ["Publikum", "Gatte", "Kinder", "50 : 50"]
+        descs = [
             "Gäste tippen 1–4.\nBalken erscheinen\nnach 5 Stimmen.",
             "Frag deinen Gatten.",
             "Frag die Kinder\ngemeinsam.",
@@ -983,8 +1358,10 @@ def info_screen():
 
         for bcx, lbl, col, title, desc in zip(block_cxs, labels, colors, titles, descs):
             # Icon circle (centred on bcx)
-            pygame.draw.circle(screen, col,      (bcx, circle_y), scaled(28))
-            pygame.draw.circle(screen, STAGE_BLUE,(bcx, circle_y), scaled(28), max(1, scaled(1)))
+            pygame.draw.circle(screen, col, (bcx, circle_y), scaled(28))
+            pygame.draw.circle(
+                screen, STAGE_BLUE, (bcx, circle_y), scaled(28), max(1, scaled(1))
+            )
             lbl_s = FONT_SMALL.render(lbl, True, WHITE)
             screen.blit(lbl_s, lbl_s.get_rect(center=(bcx, circle_y)))
             # Title centred
@@ -997,15 +1374,27 @@ def info_screen():
 
         # Click mechanic reminder
         draw_divider(screen, 430, width=300)
-        draw_centered_text(screen,
+        draw_centered_text(
+            screen,
             "Jeder Joker kann nur einmal pro Spiel verwendet werden.",
-            FONT_SMALL, MUTED_TEXT, 486)
-        draw_centered_text(screen,
+            FONT_SMALL,
+            MUTED_TEXT,
+            486,
+        )
+        draw_centered_text(
+            screen,
             "Fun Stuff kommt zuletzt und wird erst nach den anderen Kategorien freigeschaltet.",
-            FONT_SMALL, MUTED_TEXT, 512)
-        draw_centered_text(screen,
+            FONT_SMALL,
+            MUTED_TEXT,
+            512,
+        )
+        draw_centered_text(
+            screen,
             "In Fun Stuff sind alle Joker deaktiviert.",
-            FONT_SMALL, MUTED_TEXT, 536)
+            FONT_SMALL,
+            MUTED_TEXT,
+            536,
+        )
 
         btn.draw(screen)
         update_display()
@@ -1024,9 +1413,9 @@ def category_selection_screen(done):
     margin_x, gap_x = scaled(70), scaled(40)
     margin_y, gap_y = scaled(155), scaled(30)
     positions = [
-        (margin_x,              margin_y),
+        (margin_x, margin_y),
         (margin_x + card_w + gap_x, margin_y),
-        (margin_x,              margin_y + card_h + gap_y),
+        (margin_x, margin_y + card_h + gap_y),
         (margin_x + card_w + gap_x, margin_y + card_h + gap_y),
     ]
     hover_idx = -1
@@ -1036,20 +1425,28 @@ def category_selection_screen(done):
         hover_idx = -1
         for i, (cx, cy) in enumerate(positions):
             locked = is_fun_stuff_category(i) and not fun_stuff_unlocked(done)
-            if (i not in done and not locked and
-                    pygame.Rect(cx, cy, card_w, card_h).collidepoint(mx, my)):
+            if (
+                i not in done
+                and not locked
+                and pygame.Rect(cx, cy, card_w, card_h).collidepoint(mx, my)
+            ):
                 hover_idx = i
 
         for event in get_events():
             if event.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for i, (cx, cy) in enumerate(positions):
                     locked = is_fun_stuff_category(i) and not fun_stuff_unlocked(done)
-                    if (i not in done and not locked and
-                            pygame.Rect(cx, cy, card_w, card_h).collidepoint(mx, my)):
+                    if (
+                        i not in done
+                        and not locked
+                        and pygame.Rect(cx, cy, card_w, card_h).collidepoint(mx, my)
+                    ):
                         return i
 
         draw_studio_background(screen)
@@ -1057,19 +1454,22 @@ def category_selection_screen(done):
         draw_corner_decorations(screen)
 
         remaining = len(CATEGORIES) - len(done)
-        draw_centered_text(screen, "Wähle eine Kategorie",
-                           FONT_Q, WHITE, 98)
-        draw_centered_text(screen,
-                           f"Noch {remaining} von {len(CATEGORIES)} offen",
-                           FONT_SMALL, MUTED_TEXT, 128)
+        draw_centered_text(screen, "Wähle eine Kategorie", FONT_Q, WHITE, 98)
+        draw_centered_text(
+            screen,
+            f"Noch {remaining} von {len(CATEGORIES)} offen",
+            FONT_SMALL,
+            MUTED_TEXT,
+            128,
+        )
 
         for i, (cx, cy) in enumerate(positions):
-            cat   = CATEGORIES[i]
+            cat = CATEGORIES[i]
             color = cat["color"]
             done_ = i in done
             locked = is_fun_stuff_category(i) and not fun_stuff_unlocked(done)
-            hover = (i == hover_idx)
-            r     = pygame.Rect(cx, cy, card_w, card_h)
+            hover = i == hover_idx
+            r = pygame.Rect(cx, cy, card_w, card_h)
 
             if done_:
                 bg, border, bw = PANEL_BLUE, SUCCESS_GREEN_LIGHT, 2
@@ -1086,35 +1486,64 @@ def category_selection_screen(done):
             # Coloured top bar
             top_bar = pygame.Rect(cx, cy, card_w, 8)
             top_col = SUCCESS_GREEN_LIGHT if done_ else MUTED_TEXT if locked else color
-            pygame.draw.rect(screen, top_col, top_bar,
-                             border_top_left_radius=16, border_top_right_radius=16)
+            pygame.draw.rect(
+                screen,
+                top_col,
+                top_bar,
+                border_top_left_radius=16,
+                border_top_right_radius=16,
+            )
 
             if done_:
                 check = FONT_TITLE.render("✓", True, SUCCESS_GREEN)
-                screen.blit(check, check.get_rect(center=(r.centerx, r.centery - scaled(18))))
+                screen.blit(
+                    check, check.get_rect(center=(r.centerx, r.centery - scaled(18)))
+                )
                 lbl = FONT_SMALL.render(cat["name"], True, MUTED_TEXT)
-                screen.blit(lbl, lbl.get_rect(center=(r.centerx, r.centery + scaled(36))))
+                screen.blit(
+                    lbl, lbl.get_rect(center=(r.centerx, r.centery + scaled(36)))
+                )
             elif locked:
-                name_s = pygame.font.SysFont(SERIF, scaled_font(36), bold=True, italic=True)\
-                             .render(cat["name"], True, MUTED_TEXT)
-                screen.blit(name_s, name_s.get_rect(center=(r.centerx, r.centery - scaled(22))))
-                sub_s = FONT_SMALL.render("Erst nach den anderen Kategorien", True, MUTED_TEXT)
-                screen.blit(sub_s, sub_s.get_rect(center=(r.centerx, r.centery + scaled(22))))
+                name_s = pygame.font.SysFont(
+                    SERIF, scaled_font(36), bold=True, italic=True
+                ).render(cat["name"], True, MUTED_TEXT)
+                screen.blit(
+                    name_s, name_s.get_rect(center=(r.centerx, r.centery - scaled(22)))
+                )
+                sub_s = FONT_SMALL.render(
+                    "Erst nach den anderen Kategorien", True, MUTED_TEXT
+                )
+                screen.blit(
+                    sub_s, sub_s.get_rect(center=(r.centerx, r.centery + scaled(22)))
+                )
                 lock_s = FONT_OPT_BD.render("Gesperrt", True, MUTED_TEXT)
-                screen.blit(lock_s, lock_s.get_rect(center=(r.centerx, r.centery + scaled(62))))
+                screen.blit(
+                    lock_s, lock_s.get_rect(center=(r.centerx, r.centery + scaled(62)))
+                )
             else:
-                name_s = pygame.font.SysFont(SERIF, scaled_font(36), bold=True, italic=True)\
-                             .render(cat["name"], True, WHITE)
-                screen.blit(name_s, name_s.get_rect(center=(r.centerx, r.centery - scaled(22))))
-                sub_s = FONT_SMALL.render(f"{len(cat['questions'])} Fragen · leicht  →  schwer", True, MUTED_TEXT)
-                screen.blit(sub_s, sub_s.get_rect(center=(r.centerx, r.centery + scaled(22))))
+                name_s = pygame.font.SysFont(
+                    SERIF, scaled_font(36), bold=True, italic=True
+                ).render(cat["name"], True, WHITE)
+                screen.blit(
+                    name_s, name_s.get_rect(center=(r.centerx, r.centery - scaled(22)))
+                )
+                sub_s = FONT_SMALL.render(
+                    f"{len(cat['questions'])} Fragen · leicht  →  schwer",
+                    True,
+                    MUTED_TEXT,
+                )
+                screen.blit(
+                    sub_s, sub_s.get_rect(center=(r.centerx, r.centery + scaled(22)))
+                )
                 # difficulty dots
                 for d in range(5):
                     dot_x = r.centerx - scaled(40) + d * scaled(20)
                     dot_y = r.centery + scaled(60)
                     dot_c = color if not hover else SUCCESS_GREEN_LIGHT
                     pygame.draw.circle(screen, dot_c, (dot_x, dot_y), scaled(5))
-                    pygame.draw.circle(screen, PANEL_BLUE, (dot_x, dot_y), scaled(5), max(1, scaled(1)))
+                    pygame.draw.circle(
+                        screen, PANEL_BLUE, (dot_x, dot_y), scaled(5), max(1, scaled(1))
+                    )
 
         update_display()
         clock.tick(FPS)
@@ -1126,9 +1555,11 @@ def category_intro_screen(cat):
     while True:
         for event in get_events():
             if event.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 return
 
@@ -1139,16 +1570,24 @@ def category_intro_screen(cat):
         draw_centered_text(screen, "Kategorie", FONT_SUB, MUTED_TEXT, 270)
         draw_centered_text(screen, cat["name"], FONT_TITLE, color, 340)
         draw_divider(screen, 390, width=200)
-        draw_centered_text(screen, f"{len(cat['questions'])} Fragen · leicht bis schwer",
-                           FONT_SUB, SUCCESS_GREEN_LIGHT, 428)
-        draw_centered_text(screen, "Klick irgendwo zum Starten",
-                           FONT_SMALL, MUTED_TEXT, 490)
+        draw_centered_text(
+            screen,
+            f"{len(cat['questions'])} Fragen · leicht bis schwer",
+            FONT_SUB,
+            SUCCESS_GREEN_LIGHT,
+            428,
+        )
+        draw_centered_text(
+            screen, "Klick irgendwo zum Starten", FONT_SMALL, MUTED_TEXT, 490
+        )
 
         update_display()
         clock.tick(FPS)
 
 
-def question_screen(idx, question, total, joker_used, category_name="", category_color=None):
+def question_screen(
+    idx, question, total, joker_used, category_name="", category_color=None
+):
     options = []
     letters = ["A", "B", "C", "D"]
     opt_w, opt_h, gap = 880, 68, 16
@@ -1159,7 +1598,7 @@ def question_screen(idx, question, total, joker_used, category_name="", category
 
     selected = None
     revealed = False
-    correct  = question["answer"]
+    correct = question["answer"]
     award_point_on_wrong = question.get("award_point_on_wrong", False)
 
     while True:
@@ -1168,8 +1607,9 @@ def question_screen(idx, question, total, joker_used, category_name="", category
         draw_corner_decorations(screen)
         hdr_color = category_color if category_color else ACCENT_BLUE_LIGHT
         cat_lbl = f"{category_name}  ·  " if category_name else ""
-        draw_centered_text(screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}",
-                           FONT_SMALL, hdr_color, 78)
+        draw_centered_text(
+            screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 78
+        )
         draw_joker_icons(screen, joker_used)
         draw_divider(screen, 108, width=260)
         lines = wrap_text(question["q"], FONT_Q, WIDTH - 200)
@@ -1179,41 +1619,57 @@ def question_screen(idx, question, total, joker_used, category_name="", category
             desc_lines = wrap_text(question["description"], FONT_SMALL, WIDTH - 240)
             desc_y = 180 + len(lines) * 44 + 8
             for i, line in enumerate(desc_lines):
-                draw_centered_text(screen, line, FONT_SMALL, MUTED_TEXT, desc_y + i * 22)
+                draw_centered_text(
+                    screen, line, FONT_SMALL, MUTED_TEXT, desc_y + i * 22
+                )
         for opt in options:
             opt.draw(screen)
         if revealed:
             hint_y = options[-1].rect.bottom + 28
             if award_point_on_wrong and selected != correct:
-                draw_centered_text(screen, question.get("wrong_point_message",
-                                                        "Falsch - aber es gibt dafür einen Punkt."),
-                                   FONT_SMALL, ACCENT_BLUE_LIGHT, hint_y)
+                draw_centered_text(
+                    screen,
+                    question.get(
+                        "wrong_point_message",
+                        "Falsch - aber es gibt dafür einen Punkt.",
+                    ),
+                    FONT_SMALL,
+                    ACCENT_BLUE_LIGHT,
+                    hint_y,
+                )
                 hint_y += 24
-            draw_centered_text(screen, "Click the correct answer to continue",
-                               FONT_SMALL, ACCENT_BLUE_LIGHT, hint_y)
+            draw_centered_text(
+                screen,
+                "Click the correct answer to continue",
+                FONT_SMALL,
+                ACCENT_BLUE_LIGHT,
+                hint_y,
+            )
         update_display()
 
-        behind = screen.copy()   # snapshot for overlay compositing
+        behind = screen.copy()  # snapshot for overlay compositing
 
         for event in get_events():
             if event.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
 
             # Joker icon clicks — only before reveal, only if not yet used
             if not revealed:
                 ji = joker_clicked(event)
-                if ji == 0 and not joker_used[0]:      # Publikum
+                if ji == 0 and not joker_used[0]:  # Publikum
                     joker_used[0] = True
                     show_publikum_joker(behind)
-                elif ji == 1 and not joker_used[1]:    # Gatte
+                elif ji == 1 and not joker_used[1]:  # Gatte
                     joker_used[1] = True
                     show_parent_joker(behind, "Gatte", "Frag den Gatten!")
-                elif ji == 2 and not joker_used[2]:    # Kinder
+                elif ji == 2 and not joker_used[2]:  # Kinder
                     joker_used[2] = True
                     show_parent_joker(behind, "Kinder", "Frag die Kinder!")
-                elif ji == 3 and not joker_used[3]:    # 50:50
+                elif ji == 3 and not joker_used[3]:  # 50:50
                     joker_used[3] = True
                     apply_50_50(options, correct)
                     # deselect if the locked answer was eliminated
@@ -1252,19 +1708,23 @@ def question_screen(idx, question, total, joker_used, category_name="", category
                                 sfx.play()
                     elif i == correct:
                         # Third click on correct answer → advance
-                        return selected == correct or (award_point_on_wrong and selected != correct)
+                        return selected == correct or (
+                            award_point_on_wrong and selected != correct
+                        )
 
         clock.tick(FPS)
 
 
 # ---------- Audio + free-text question ----------
 
+
 def _normalize_text_answer(text):
     return "".join(ch for ch in text.lower().strip() if ch.isalnum())
 
 
-def audio_text_question_screen(idx, question, total, joker_used,
-                               category_name="", category_color=None):
+def audio_text_question_screen(
+    idx, question, total, joker_used, category_name="", category_color=None
+):
     audio_path = os.path.join(ASSETS_DIR, question["audio"])
     audio = None
     if os.path.exists(audio_path):
@@ -1312,10 +1772,12 @@ def audio_text_question_screen(idx, question, total, joker_used,
         for event in get_events():
             if event.type == pygame.QUIT:
                 stop_audio()
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 stop_audio()
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
 
             if btn_audio.handle(event):
                 toggle_audio()
@@ -1329,17 +1791,23 @@ def audio_text_question_screen(idx, question, total, joker_used,
                     elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                         submitted = True
                         stop_audio()
-                        is_correct = (_normalize_text_answer(answer_text) ==
-                                      _normalize_text_answer(question["answer"]))
-                    elif event.unicode and event.unicode.isprintable() and len(answer_text) < 40:
+                        is_correct = _normalize_text_answer(
+                            answer_text
+                        ) == _normalize_text_answer(question["answer"])
+                    elif (
+                        event.unicode
+                        and event.unicode.isprintable()
+                        and len(answer_text) < 40
+                    ):
                         answer_text += event.unicode
                         stop_audio()
 
                 if btn_fertig.handle(event):
                     submitted = True
                     stop_audio()
-                    is_correct = (_normalize_text_answer(answer_text) ==
-                                  _normalize_text_answer(question["answer"]))
+                    is_correct = _normalize_text_answer(
+                        answer_text
+                    ) == _normalize_text_answer(question["answer"])
             else:
                 if btn_weiter.handle(event):
                     stop_audio()
@@ -1352,8 +1820,9 @@ def audio_text_question_screen(idx, question, total, joker_used,
 
         hdr_color = category_color or ACCENT_BLUE_LIGHT
         cat_lbl = f"{category_name}  ·  " if category_name else ""
-        draw_centered_text(screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}",
-                           FONT_SMALL, hdr_color, 78)
+        draw_centered_text(
+            screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 78
+        )
         draw_joker_icons(screen, joker_used)
         draw_divider(screen, 108, width=260)
 
@@ -1364,21 +1833,38 @@ def audio_text_question_screen(idx, question, total, joker_used,
         btn_audio.draw(screen)
 
         pygame.draw.rect(screen, WHITE, input_rect, border_radius=12)
-        pygame.draw.rect(screen, SUCCESS_GREEN if not submitted else MUTED_TEXT,
-                         input_rect, 2, border_radius=12)
+        pygame.draw.rect(
+            screen,
+            SUCCESS_GREEN if not submitted else MUTED_TEXT,
+            input_rect,
+            2,
+            border_radius=12,
+        )
         shown_text = answer_text if answer_text else "Antwort eintippen..."
         text_col = TEXT_DARK if answer_text else MUTED_TEXT
         text_surf = FONT_OPT.render(shown_text[-34:], True, text_col)
-        screen.blit(text_surf, text_surf.get_rect(midleft=(input_rect.x + 22, input_rect.centery)))
+        screen.blit(
+            text_surf,
+            text_surf.get_rect(midleft=(input_rect.x + 22, input_rect.centery)),
+        )
 
         if not submitted and (pygame.time.get_ticks() // 500) % 2 == 0:
             cursor_x = input_rect.x + 24 + FONT_OPT.size(answer_text[-34:])[0]
-            pygame.draw.line(screen, TEXT_DARK, (cursor_x, input_rect.y + 18),
-                             (cursor_x, input_rect.bottom - 18), 2)
+            pygame.draw.line(
+                screen,
+                TEXT_DARK,
+                (cursor_x, input_rect.y + 18),
+                (cursor_x, input_rect.bottom - 18),
+                2,
+            )
 
         if submitted:
             result_col = SUCCESS_GREEN if is_correct else ANSWER_BLUE
-            result_txt = "Richtig!" if is_correct else f"Falsch - richtig ist: {question['answer']}"
+            result_txt = (
+                "Richtig!"
+                if is_correct
+                else f"Falsch - richtig ist: {question['answer']}"
+            )
             draw_centered_text(screen, result_txt, FONT_OPT_BD, result_col, 480)
             btn_weiter.draw(screen)
         else:
@@ -1390,10 +1876,10 @@ def audio_text_question_screen(idx, question, total, joker_used,
 
 # ---------- Photo-ordering question ----------
 
-_OTILE_W    = scaled(90)
+_OTILE_W = scaled(90)
 _OTILE_IMGH = scaled(68)
-_OTILE_H    = _OTILE_IMGH
-_OTILE_GAP  = scaled(8)
+_OTILE_H = _OTILE_IMGH
+_OTILE_GAP = scaled(8)
 _OTILE_ROW_GAP = scaled(30)
 _OTILE_COLS = 7
 _OTILE_STEP_X = _OTILE_W + _OTILE_GAP
@@ -1420,7 +1906,7 @@ def _nearest_order_slot(mx, my, count, start_x, start_y, cols):
 
 
 def _load_order_photos(question):
-    count  = question.get("count", 10)
+    count = question.get("count", 10)
     prefix = question.get("photo_prefix", "foto_")
     photos = []
     for i in range(1, count + 1):
@@ -1430,7 +1916,9 @@ def _load_order_photos(question):
             if os.path.exists(path):
                 try:
                     img = pygame.image.load(path).convert()
-                    photos.append(pygame.transform.smoothscale(img, (_OTILE_W, _OTILE_IMGH)))
+                    photos.append(
+                        pygame.transform.smoothscale(img, (_OTILE_W, _OTILE_IMGH))
+                    )
                     loaded = True
                     break
                 except pygame.error:
@@ -1447,23 +1935,24 @@ def _load_order_photos(question):
 
 def _draw_order_tile(surf, x, y, photo, number, state="idle"):
     if state == "correct":
-        border, bw = SUCCESS_GREEN_DARK,  3
+        border, bw = SUCCESS_GREEN_DARK, 3
     elif state == "wrong":
-        border, bw = DEEP_BLUE,    3
+        border, bw = DEEP_BLUE, 3
     elif state == "dragging":
         border, bw = ACCENT_BLUE_DARK, 3
     else:
-        border, bw = SUCCESS_GREEN,       2
+        border, bw = SUCCESS_GREEN, 2
 
     surf.blit(photo, (x, y))
     pygame.draw.rect(surf, border, (x, y, _OTILE_W, _OTILE_IMGH), bw)
 
 
-def ordering_question_screen(idx, question, total, joker_used,
-                              category_name="", category_color=None):
-    photos  = _load_order_photos(question)
-    count   = len(photos)
-    answer  = [x - 1 for x in question["answer"]]  # 0-based correct order
+def ordering_question_screen(
+    idx, question, total, joker_used, category_name="", category_color=None
+):
+    photos = _load_order_photos(question)
+    count = len(photos)
+    answer = [x - 1 for x in question["answer"]]  # 0-based correct order
     pass_at = question.get("pass_at", round(count * 0.6))
 
     cols = min(_OTILE_COLS, count)
@@ -1471,30 +1960,40 @@ def ordering_question_screen(idx, question, total, joker_used,
     total_w = cols * _OTILE_W + (cols - 1) * _OTILE_GAP
     total_h = rows * _OTILE_H + (rows - 1) * _OTILE_ROW_GAP
     start_x = (WIDTH - total_w) // 2
-    tile_y  = scaled(285)
+    tile_y = scaled(285)
 
-    order     = list(range(count))
+    order = list(range(count))
     random.shuffle(order)
-    dragging  = None   # slot index being dragged
-    grab_dx   = 0      # mouse_x minus tile left-x at drag start
-    grab_dy   = 0      # mouse_y minus tile top-y at drag start
-    drag_mx   = 0
-    drag_my   = 0
+    dragging = None  # slot index being dragged
+    grab_dx = 0  # mouse_x minus tile left-x at drag start
+    grab_dy = 0  # mouse_y minus tile top-y at drag start
+    drag_mx = 0
+    drag_my = 0
     confirmed = False
 
     button_w, button_h = scaled(260), scaled(56)
     button_y = tile_y + total_h + scaled(74)
-    btn_fertig = Button((WIDTH // 2 - button_w // 2, button_y, button_w, button_h),
-                        "Fertig!", primary=True, raw=True)
-    btn_weiter = Button((WIDTH // 2 - button_w // 2, button_y, button_w, button_h),
-                        "Weiter",  primary=False, raw=True)
+    btn_fertig = Button(
+        (WIDTH // 2 - button_w // 2, button_y, button_w, button_h),
+        "Fertig!",
+        primary=True,
+        raw=True,
+    )
+    btn_weiter = Button(
+        (WIDTH // 2 - button_w // 2, button_y, button_w, button_h),
+        "Weiter",
+        primary=False,
+        raw=True,
+    )
 
     while True:
         for event in get_events():
             if event.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
 
             if not confirmed:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -1503,20 +2002,22 @@ def ordering_question_screen(idx, question, total, joker_used,
                         tx, ty = _order_slot_pos(s, start_x, tile_y, cols)
                         if pygame.Rect(tx, ty, _OTILE_W, _OTILE_H).collidepoint(mx, my):
                             dragging = s
-                            grab_dx  = mx - tx
-                            grab_dy  = my - ty
-                            drag_mx  = mx
-                            drag_my  = my
+                            grab_dx = mx - tx
+                            grab_dy = my - ty
+                            drag_mx = mx
+                            drag_my = my
                             break
                     if btn_fertig.handle(event):
                         confirmed = True
 
                 if event.type == pygame.MOUSEMOTION and dragging is not None:
-                    drag_mx  = event.pos[0]
-                    drag_my  = event.pos[1]
-                    tile_cx  = drag_mx - grab_dx + _OTILE_W // 2
-                    tile_cy  = drag_my - grab_dy + _OTILE_H // 2
-                    new_slot = _nearest_order_slot(tile_cx, tile_cy, count, start_x, tile_y, cols)
+                    drag_mx = event.pos[0]
+                    drag_my = event.pos[1]
+                    tile_cx = drag_mx - grab_dx + _OTILE_W // 2
+                    tile_cy = drag_my - grab_dy + _OTILE_H // 2
+                    new_slot = _nearest_order_slot(
+                        tile_cx, tile_cy, count, start_x, tile_y, cols
+                    )
                     if new_slot != dragging:
                         item = order.pop(dragging)
                         order.insert(new_slot, item)
@@ -1530,7 +2031,9 @@ def ordering_question_screen(idx, question, total, joker_used,
 
             else:
                 if btn_weiter.handle(event):
-                    correct_count = sum(1 for s in range(count) if order[s] == answer[s])
+                    correct_count = sum(
+                        1 for s in range(count) if order[s] == answer[s]
+                    )
                     return correct_count >= pass_at
 
         # ---- Draw ----
@@ -1538,9 +2041,10 @@ def ordering_question_screen(idx, question, total, joker_used,
         draw_corner_decorations(screen)
 
         hdr_color = category_color or ACCENT_BLUE_LIGHT
-        cat_lbl   = f"{category_name}  ·  " if category_name else ""
-        draw_centered_text(screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}",
-                           FONT_SMALL, hdr_color, 78)
+        cat_lbl = f"{category_name}  ·  " if category_name else ""
+        draw_centered_text(
+            screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 78
+        )
         draw_joker_icons(screen, joker_used)
         draw_divider(screen, 108, width=260)
 
@@ -1552,7 +2056,7 @@ def ordering_question_screen(idx, question, total, joker_used,
         for s in range(count):
             tx, ty = _order_slot_pos(s, start_x, tile_y, cols)
             sx = tx + _OTILE_W // 2
-            n  = FONT_SMALL.render(str(s + 1), True, MUTED_TEXT)
+            n = FONT_SMALL.render(str(s + 1), True, MUTED_TEXT)
             screen.blit(n, n.get_rect(center=(sx, ty - scaled(16))))
 
         # Draw non-dragged tiles first
@@ -1563,25 +2067,38 @@ def ordering_question_screen(idx, question, total, joker_used,
             if confirmed:
                 state = "correct" if order[s] == answer[s] else "wrong"
             tx, ty = _order_slot_pos(s, start_x, tile_y, cols)
-            _draw_order_tile(screen, tx, ty,
-                             photos[photo_idx], photo_idx + 1, state)
+            _draw_order_tile(screen, tx, ty, photos[photo_idx], photo_idx + 1, state)
 
         # Dragged tile on top (floats with mouse)
         if dragging is not None:
-            _draw_order_tile(screen, drag_mx - grab_dx, drag_my - grab_dy,
-                             photos[order[dragging]], order[dragging] + 1, "dragging")
+            _draw_order_tile(
+                screen,
+                drag_mx - grab_dx,
+                drag_my - grab_dy,
+                photos[order[dragging]],
+                order[dragging] + 1,
+                "dragging",
+            )
 
         if not confirmed:
-            draw_centered_text_px(screen,
-                                  "Ziehe die Fotos in die richtige Reihenfolge",
-                                  FONT_SMALL, MUTED_TEXT, tile_y + total_h + scaled(34))
+            draw_centered_text_px(
+                screen,
+                "Ziehe die Fotos in die richtige Reihenfolge",
+                FONT_SMALL,
+                MUTED_TEXT,
+                tile_y + total_h + scaled(34),
+            )
             btn_fertig.draw(screen)
         else:
             correct_count = sum(1 for s in range(count) if order[s] == answer[s])
             result_col = SUCCESS_GREEN if correct_count >= pass_at else ANSWER_BLUE
-            draw_centered_text_px(screen,
-                                  f"{correct_count} / {count} richtig positioniert",
-                                  FONT_Q, result_col, tile_y + total_h + scaled(34))
+            draw_centered_text_px(
+                screen,
+                f"{correct_count} / {count} richtig positioniert",
+                FONT_Q,
+                result_col,
+                tile_y + total_h + scaled(34),
+            )
             btn_weiter.draw(screen)
 
         update_display()
@@ -1590,10 +2107,10 @@ def ordering_question_screen(idx, question, total, joker_used,
 
 # ---------- Video question ----------
 
-_VID_W  = scaled(640)
-_VID_H  = scaled(360)   # 16:9
-_VID_X  = (WIDTH  - _VID_W) // 2   # 230
-_VID_Y  = scaled(65)
+_VID_W = scaled(640)
+_VID_H = scaled(360)  # 16:9
+_VID_X = (WIDTH - _VID_W) // 2  # 230
+_VID_Y = scaled(65)
 
 
 import atexit
@@ -1601,8 +2118,9 @@ import shutil
 import subprocess
 import tempfile
 
-_VIDEO_AUDIO_CACHE: dict = {}   # video_path → resolved audio path
-_TEMP_AUDIO_FILES:  list = []   # temp files to delete on exit
+_VIDEO_AUDIO_CACHE: dict = {}  # video_path → resolved audio path
+_TEMP_AUDIO_FILES: list = []  # temp files to delete on exit
+
 
 @atexit.register
 def _cleanup_temp_audio():
@@ -1620,14 +2138,17 @@ def _find_ffmpeg():
     if p:
         return p
     # Common Homebrew locations on macOS
-    for cand in ("/opt/homebrew/bin/ffmpeg",
-                 "/usr/local/bin/ffmpeg",
-                 "/opt/local/bin/ffmpeg"):
+    for cand in (
+        "/opt/homebrew/bin/ffmpeg",
+        "/usr/local/bin/ffmpeg",
+        "/opt/local/bin/ffmpeg",
+    ):
         if os.path.exists(cand):
             return cand
     # imageio-ffmpeg bundles its own binary — `pip install imageio-ffmpeg`
     try:
         import imageio_ffmpeg
+
         return imageio_ffmpeg.get_ffmpeg_exe()
     except Exception:
         return None
@@ -1658,9 +2179,9 @@ def _resolve_video_audio(video_path, explicit_audio_name=""):
             tmp = tempfile.NamedTemporaryFile(suffix=".mp3", delete=False)
             tmp.close()
             r = subprocess.run(
-                [ffmpeg_cmd, "-y", "-i", video_path,
-                 "-vn", "-q:a", "2", tmp.name],
-                capture_output=True, timeout=60,
+                [ffmpeg_cmd, "-y", "-i", video_path, "-vn", "-q:a", "2", tmp.name],
+                capture_output=True,
+                timeout=60,
             )
             if r.returncode == 0:
                 _TEMP_AUDIO_FILES.append(tmp.name)
@@ -1683,42 +2204,51 @@ def _resolve_video_audio(video_path, explicit_audio_name=""):
 
 def _make_frame_surface(frame_bgr):
     """Convert an OpenCV BGR frame to a scaled pygame Surface."""
-    rgb    = _cv2.cvtColor(frame_bgr, _cv2.COLOR_BGR2RGB)
+    rgb = _cv2.cvtColor(frame_bgr, _cv2.COLOR_BGR2RGB)
     scaled = _cv2.resize(rgb, (_VID_W, _VID_H))
     return pygame.surfarray.make_surface(scaled.swapaxes(0, 1))
 
 
-def video_question_screen(idx, question, total, joker_used,
-                           category_name="", category_color=None):
+def video_question_screen(
+    idx, question, total, joker_used, category_name="", category_color=None
+):
     # ---- Graceful degradation if OpenCV is missing ----
     if not _CV2_OK:
         print("[warn] opencv-python not installed — falling back to multiple-choice")
         mc_q = {k: v for k, v in question.items()}
-        mc_q.pop("video", None); mc_q.pop("audio", None)
-        mc_q.pop("pause_at", None); mc_q.pop("stop_at", None); mc_q.pop("type", None)
-        return question_screen(idx, mc_q, total, joker_used,
-                                category_name, category_color)
+        mc_q.pop("video", None)
+        mc_q.pop("audio", None)
+        mc_q.pop("pause_at", None)
+        mc_q.pop("stop_at", None)
+        mc_q.pop("type", None)
+        return question_screen(
+            idx, mc_q, total, joker_used, category_name, category_color
+        )
 
     video_path = os.path.join(ASSETS_DIR, question["video"])
     pause_at = float(question["pause_at"])
     stop_at = question.get("stop_at")
     stop_at = float(stop_at) if stop_at is not None else None
-    correct  = question["answer"]
+    correct = question["answer"]
 
     # ---- Open video ----
     if not os.path.exists(video_path):
         print(f"[warn] video not found: {video_path}")
-        mc_q = {k: v for k, v in question.items()
-                if k not in ("video","audio","pause_at","stop_at","type")}
-        return question_screen(idx, mc_q, total, joker_used,
-                                category_name, category_color)
+        mc_q = {
+            k: v
+            for k, v in question.items()
+            if k not in ("video", "audio", "pause_at", "stop_at", "type")
+        }
+        return question_screen(
+            idx, mc_q, total, joker_used, category_name, category_color
+        )
 
-    cap      = _cv2.VideoCapture(video_path)
-    vid_fps  = cap.get(_cv2.CAP_PROP_FPS) or 30.0
+    cap = _cv2.VideoCapture(video_path)
+    vid_fps = cap.get(_cv2.CAP_PROP_FPS) or 30.0
     frame_ms = 1000.0 / vid_fps
 
     # ---- Audio — load now (but don't play yet — user clicks ▶ to start) ----
-    has_audio  = False
+    has_audio = False
     audio_file = _resolve_video_audio(video_path, question.get("audio", ""))
     if audio_file:
         try:
@@ -1728,9 +2258,9 @@ def video_question_screen(idx, question, total, joker_used,
             print(f"[warn] audio load failed: {e}")
 
     # ---- Option buttons ----
-    letters   = ["A", "B", "C", "D"]
+    letters = ["A", "B", "C", "D"]
     opt_w, opt_h, opt_gap = 640, 52, 10
-    opt_y0 = 65 + 360 + 46        # below video + question line
+    opt_y0 = 65 + 360 + 46  # below video + question line
     options = []
     for i, text in enumerate(question["options"]):
         rect = ((BASE_WIDTH - opt_w) // 2, opt_y0 + i * (opt_h + opt_gap), opt_w, opt_h)
@@ -1739,31 +2269,35 @@ def video_question_screen(idx, question, total, joker_used,
     # small restart button — lives inside video frame bottom-right
     btn_restart = Button(
         ((BASE_WIDTH - 640) // 2 + 640 - 126, 65 + 360 - 40, 120, 34),
-        "↺ Neustart", primary=False)
+        "↺ Neustart",
+        primary=False,
+    )
     # advance button — shown after video ends
-    btn_weiter  = Button(
+    btn_weiter = Button(
         (BASE_WIDTH // 2 - 120, opt_y0 + 4 * (opt_h + opt_gap) + 10, 240, 52),
-        "Weiter", primary=False)
+        "Weiter",
+        primary=False,
+    )
 
     # ---- State ----
     # Show the first frame as a "poster" with a ▶ overlay — click to start.
-    poster_frame   = None
+    poster_frame = None
     ret0, frm0 = cap.read()
     if ret0:
         poster_frame = _make_frame_surface(frm0)
-        cap.set(_cv2.CAP_PROP_POS_MSEC, 0)   # rewind so playback starts at 0
+        cap.set(_cv2.CAP_PROP_POS_MSEC, 0)  # rewind so playback starts at 0
 
-    frame_surf     = poster_frame
-    not_started    = True            # waiting for the user to click ▶
-    play_start     = 0
-    elapsed_ms     = 0
-    last_read_ms   = 0
-    playing        = False
-    paused         = False
-    vid_ended      = False
-    selected       = None
-    answered       = False     # True after the 2nd click — video keeps playing
-    revealed       = False     # True after the video ends — colors + sound
+    frame_surf = poster_frame
+    not_started = True  # waiting for the user to click ▶
+    play_start = 0
+    elapsed_ms = 0
+    last_read_ms = 0
+    playing = False
+    paused = False
+    vid_ended = False
+    selected = None
+    answered = False  # True after the 2nd click — video keeps playing
+    revealed = False  # True after the video ends — colors + sound
 
     video_rect = pygame.Rect(_VID_X, _VID_Y, _VID_W, _VID_H)
 
@@ -1772,13 +2306,13 @@ def video_question_screen(idx, question, total, joker_used,
         cap.set(_cv2.CAP_PROP_POS_MSEC, 0)
         if has_audio:
             pygame.mixer.music.play()
-        play_start   = pygame.time.get_ticks()
-        elapsed_ms   = 0
+        play_start = pygame.time.get_ticks()
+        elapsed_ms = 0
         # Anchor the frame clock to wall time so the first read fires at play_start,
         # not at "tick 0 since pygame init".
         last_read_ms = play_start - frame_ms
-        playing      = True
-        not_started  = False
+        playing = True
+        not_started = False
 
     def do_restart():
         nonlocal frame_surf, play_start, elapsed_ms, last_read_ms
@@ -1787,18 +2321,19 @@ def video_question_screen(idx, question, total, joker_used,
         if has_audio:
             pygame.mixer.music.stop()
             pygame.mixer.music.play()
-        play_start   = pygame.time.get_ticks()
-        elapsed_ms   = 0
+        play_start = pygame.time.get_ticks()
+        elapsed_ms = 0
         last_read_ms = play_start - frame_ms
-        playing  = True
-        paused   = False
+        playing = True
+        paused = False
         vid_ended = False
         not_started = False
         selected = None
         answered = False
         revealed = False
         for o in options:
-            o.state = "idle"; o.hover = False
+            o.state = "idle"
+            o.hover = False
 
     def reveal_answer():
         nonlocal revealed
@@ -1824,13 +2359,21 @@ def video_question_screen(idx, question, total, joker_used,
 
         for event in get_events():
             if event.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                if has_audio: pygame.mixer.music.stop()
-                cap.release(); pygame.quit(); sys.exit()
+                if has_audio:
+                    pygame.mixer.music.stop()
+                cap.release()
+                pygame.quit()
+                sys.exit()
 
             # Click on video poster → start playback
-            if not_started and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if (
+                not_started
+                and event.type == pygame.MOUSEBUTTONDOWN
+                and event.button == 1
+            ):
                 if video_rect.collidepoint(event.pos):
                     start_playback()
                     continue
@@ -1850,15 +2393,19 @@ def video_question_screen(idx, question, total, joker_used,
                             for j, o in enumerate(options):
                                 if o.state != "eliminated":
                                     o.state = "selected" if j == i else "idle"
-                            if LOCKIN_SFX: LOCKIN_SFX.play()
+                            if LOCKIN_SFX:
+                                LOCKIN_SFX.play()
                         else:
                             # 2nd click — resume video; the reveal waits for the video to end
-                            if LOCKIN_SFX: LOCKIN_SFX.stop()
+                            if LOCKIN_SFX:
+                                LOCKIN_SFX.stop()
                             answered = True
                             # lock the choice visually: dim every non-selected option
                             for j, o in enumerate(options):
-                                if o.state == "eliminated": continue
-                                if j != selected: o.state = "dimmed"
+                                if o.state == "eliminated":
+                                    continue
+                                if j != selected:
+                                    o.state = "dimmed"
                                 # the selected one keeps its lock-in colour.
                             # Resume both video AND audio from pause_at − 3 s
                             resume_s = max(0.0, pause_at - 3.0)
@@ -1867,17 +2414,18 @@ def video_question_screen(idx, question, total, joker_used,
                                 # play(start=…) seeks AND resumes in one call.
                                 # plain play() after set_pos() rewinds to 0 — that was the bug.
                                 pygame.mixer.music.play(start=resume_s)
-                            elapsed_ms   = int(resume_s * 1000)
-                            play_start   = now - elapsed_ms
+                            elapsed_ms = int(resume_s * 1000)
+                            play_start = now - elapsed_ms
                             last_read_ms = now - frame_ms
-                            paused  = False
+                            paused = False
                             playing = True
 
             # Advance after the reveal: click the correct (green) answer
             if revealed:
                 for i, opt in enumerate(options):
                     if opt.handle(event) and i == correct:
-                        if has_audio: pygame.mixer.music.stop()
+                        if has_audio:
+                            pygame.mixer.music.stop()
                         cap.release()
                         return selected == correct
 
@@ -1888,9 +2436,10 @@ def video_question_screen(idx, question, total, joker_used,
 
             # Pause at the designated timestamp
             if elapsed_s >= pause_at and not answered:
-                paused  = True
+                paused = True
                 playing = False
-                if has_audio: pygame.mixer.music.pause()
+                if has_audio:
+                    pygame.mixer.music.pause()
                 # Freeze on the exact pause frame
                 cap.set(_cv2.CAP_PROP_POS_MSEC, pause_at * 1000)
                 ret, frm = cap.read()
@@ -1914,13 +2463,13 @@ def video_question_screen(idx, question, total, joker_used,
                     ret, frm = cap.read()
                     if not ret:
                         vid_ended = True
-                        playing   = False
+                        playing = False
                         # When the video finishes, NOW reveal the answer
                         if answered and not revealed:
                             reveal_answer()
                         break
-                    latest_frm    = frm
-                    last_read_ms += frame_ms     # accumulate, NOT reset to now
+                    latest_frm = frm
+                    last_read_ms += frame_ms  # accumulate, NOT reset to now
                 if latest_frm is not None:
                     frame_surf = _make_frame_surface(latest_frm)
 
@@ -1929,9 +2478,10 @@ def video_question_screen(idx, question, total, joker_used,
         draw_corner_decorations(screen)
 
         hdr_color = category_color or ACCENT_BLUE_LIGHT
-        cat_lbl   = f"{category_name}  ·  " if category_name else ""
-        draw_centered_text(screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}",
-                           FONT_SMALL, hdr_color, 40)
+        cat_lbl = f"{category_name}  ·  " if category_name else ""
+        draw_centered_text(
+            screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 40
+        )
         draw_joker_icons(screen, joker_used)
 
         # Video frame
@@ -1939,8 +2489,9 @@ def video_question_screen(idx, question, total, joker_used,
             screen.blit(frame_surf, (_VID_X, _VID_Y))
         else:
             pygame.draw.rect(screen, TEXT_LIGHT, (_VID_X, _VID_Y, _VID_W, _VID_H))
-            draw_centered_text_px(screen, "Wird geladen …",
-                                  FONT_SMALL, MUTED_TEXT, _VID_Y + _VID_H // 2)
+            draw_centered_text_px(
+                screen, "Wird geladen …", FONT_SMALL, MUTED_TEXT, _VID_Y + _VID_H // 2
+            )
         # border
         pygame.draw.rect(screen, SUCCESS_GREEN, (_VID_X, _VID_Y, _VID_W, _VID_H), 2)
 
@@ -1951,10 +2502,10 @@ def video_question_screen(idx, question, total, joker_used,
             screen.blit(veil, (_VID_X, _VID_Y))
             # big triangle play icon, centered
             cx, cy = _VID_X + _VID_W // 2, _VID_Y + _VID_H // 2
-            r      = 44
+            r = 44
             pygame.draw.circle(screen, (0, 0, 0, 0), (cx, cy), r + 4)
             pygame.draw.circle(screen, WHITE, (cx, cy), r)
-            pygame.draw.circle(screen, SUCCESS_GREEN_DARK,  (cx, cy), r, 3)
+            pygame.draw.circle(screen, SUCCESS_GREEN_DARK, (cx, cy), r, 3)
             tri = [
                 (cx - 14, cy - 22),
                 (cx - 14, cy + 22),
@@ -1962,8 +2513,9 @@ def video_question_screen(idx, question, total, joker_used,
             ]
             pygame.draw.polygon(screen, SUCCESS_GREEN_DARK, tri)
             hint = FONT_SUB.render("Klick zum Starten", True, WHITE)
-            shade = pygame.Surface((hint.get_width() + 20, hint.get_height() + 10),
-                                   pygame.SRCALPHA)
+            shade = pygame.Surface(
+                (hint.get_width() + 20, hint.get_height() + 10), pygame.SRCALPHA
+            )
             shade.fill((0, 0, 0, 160))
             shade_pos = (cx - shade.get_width() // 2, cy + r + 14)
             screen.blit(shade, shade_pos)
@@ -1974,8 +2526,9 @@ def video_question_screen(idx, question, total, joker_used,
             banner = FONT_SMALL.render("▐▐  Antworte jetzt!", True, WHITE)
             bx = _VID_X + _VID_W // 2 - banner.get_width() // 2 - 8
             by = _VID_Y + _VID_H - 30
-            shade = pygame.Surface((banner.get_width() + 16, banner.get_height() + 8),
-                                   pygame.SRCALPHA)
+            shade = pygame.Surface(
+                (banner.get_width() + 16, banner.get_height() + 8), pygame.SRCALPHA
+            )
             shade.fill((0, 0, 0, 140))
             screen.blit(shade, (bx, by - 4))
             screen.blit(banner, (bx + 8, by))
@@ -1988,22 +2541,34 @@ def video_question_screen(idx, question, total, joker_used,
         if paused or answered or revealed:
             q_lines = wrap_text(question["q"], FONT_Q, _VID_W)
             for li, line in enumerate(q_lines):
-                draw_centered_text_px(screen, line, FONT_Q, TEXT_LIGHT,
-                                      _VID_Y + _VID_H + scaled(22) + li * scaled(38))
+                draw_centered_text_px(
+                    screen,
+                    line,
+                    FONT_Q,
+                    TEXT_LIGHT,
+                    _VID_Y + _VID_H + scaled(22) + li * scaled(38),
+                )
             for opt in options:
                 opt.draw(screen)
 
         # After the reveal: hint that clicking the correct answer advances
         if revealed:
-            draw_centered_text_px(screen,
-                                  "Click the correct answer to continue",
-                                  FONT_SMALL, SUCCESS_GREEN_DARK,
-                                  options[-1].rect.bottom + scaled(16))
+            draw_centered_text_px(
+                screen,
+                "Click the correct answer to continue",
+                FONT_SMALL,
+                SUCCESS_GREEN_DARK,
+                options[-1].rect.bottom + scaled(16),
+            )
         elif vid_ended and not answered:
             # Edge case: video ended before the user answered
-            draw_centered_text_px(screen, "Wähle eine Antwort",
-                                  FONT_SMALL, MUTED_TEXT,
-                                  options[-1].rect.bottom + scaled(16))
+            draw_centered_text_px(
+                screen,
+                "Wähle eine Antwort",
+                FONT_SMALL,
+                MUTED_TEXT,
+                options[-1].rect.bottom + scaled(16),
+            )
 
         update_display()
         clock.tick(FPS)
@@ -2015,9 +2580,11 @@ def end_screen(score, total):
     while True:
         for event in get_events():
             if event.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
             if btn.handle(event):
                 return
 
@@ -2030,12 +2597,22 @@ def end_screen(score, total):
 
         draw_show_bar(screen, WIDTH // 2, 340, w=140, h=14)
 
-        draw_centered_text(screen, f"Score:  {score}  /  {total}", FONT_Q, ACCENT_BLUE_LIGHT, 400)
+        draw_centered_text(
+            screen, f"Score:  {score}  /  {total}", FONT_Q, ACCENT_BLUE_LIGHT, 400
+        )
         draw_centered_text(screen, "Da ist dein Preis!", FONT_SUB, TEXT_LIGHT, 450)
 
         # decorative studio-light row
         cx = WIDTH // 2
-        palette = [ANSWER_BLUE, ACCENT_BLUE, GREEN_ACCENT, SUCCESS_GREEN, ANSWER_BLUE, ACCENT_BLUE, GREEN_ACCENT]
+        palette = [
+            ANSWER_BLUE,
+            ACCENT_BLUE,
+            GREEN_ACCENT,
+            SUCCESS_GREEN,
+            ANSWER_BLUE,
+            ACCENT_BLUE,
+            GREEN_ACCENT,
+        ]
         for i, dx in enumerate([-90, -60, -30, 0, 30, 60, 90]):
             draw_heart(screen, cx + dx, 495, size=8, color=palette[i])
 
@@ -2051,7 +2628,8 @@ def between_questions_pause(ms=2000):
     while pygame.time.get_ticks() - start < ms:
         for event in get_events():
             if event.type == pygame.QUIT:
-                pygame.quit(); sys.exit()
+                pygame.quit()
+                sys.exit()
         draw_studio_background(screen)
         draw_corner_decorations(screen)
         update_display()
@@ -2064,9 +2642,9 @@ def main():
         title_screen()
         info_screen()
 
-        score      = 0
-        joker_used = [False, False, False, False]   # once per full game
-        done_cats  = set()
+        score = 0
+        joker_used = [False, False, False, False]  # once per full game
+        done_cats = set()
         first_question_pending = True
 
         while len(done_cats) < len(CATEGORIES):
@@ -2074,7 +2652,11 @@ def main():
             if cat_idx is None:
                 break
             cat = CATEGORIES[cat_idx]
-            category_joker_used = [True, True, True, True] if cat["name"] == FUN_STUFF_CATEGORY else joker_used
+            category_joker_used = (
+                [True, True, True, True]
+                if cat["name"] == FUN_STUFF_CATEGORY
+                else joker_used
+            )
 
             category_intro_screen(cat)
 
@@ -2083,16 +2665,24 @@ def main():
                     stop_title_music(0)
                     first_question_pending = False
                 play_intro_sound()
-                kwargs = dict(joker_used=category_joker_used,
-                              category_name=cat["name"],
-                              category_color=cat["color"])
+                kwargs = dict(
+                    joker_used=category_joker_used,
+                    category_name=cat["name"],
+                    category_color=cat["color"],
+                )
                 qtype = q.get("type")
                 if qtype == "ordering":
-                    result = ordering_question_screen(qi, q, len(cat["questions"]), **kwargs)
+                    result = ordering_question_screen(
+                        qi, q, len(cat["questions"]), **kwargs
+                    )
                 elif qtype == "audio_text":
-                    result = audio_text_question_screen(qi, q, len(cat["questions"]), **kwargs)
+                    result = audio_text_question_screen(
+                        qi, q, len(cat["questions"]), **kwargs
+                    )
                 elif qtype == "video":
-                    result = video_question_screen(qi, q, len(cat["questions"]), **kwargs)
+                    result = video_question_screen(
+                        qi, q, len(cat["questions"]), **kwargs
+                    )
                 else:
                     result = question_screen(qi, q, len(cat["questions"]), **kwargs)
                 if result:
