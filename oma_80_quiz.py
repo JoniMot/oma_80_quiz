@@ -36,6 +36,7 @@ WIDTH, HEIGHT = BASE_WIDTH, BASE_HEIGHT
 FPS = 60
 FULLSCREEN = True
 UI_SCALE = 1.0
+UNLOCK_FUN_STUFF_IMMEDIATELY = True
 
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
 IMAGE_CANDIDATES = [
@@ -106,6 +107,26 @@ WRONG_RED = (150, 48, 74)
 #     "picture": "bildname.jpg",  # place in assets/
 #     "options": ["A", "B", "C", "D"],
 #     "answer": 0,
+# }
+# Fun photo text questions:
+# {
+#     "type": "fun_photo",
+#     "q": "Was wurde hier verändert?",
+#     "photo": "haare",  # expects assets/fun_fotos/haare.* and haare_og.*
+#     "answers": ["Haare", "Frisur"],  # any of these words is accepted
+# }
+# Video challenge questions:
+# {
+#     "type": "video_challenge",
+#     "video": "beer_pong.MOV",
+#     "challenge": "Zeig uns, dass dieses Video nicht gefälscht ist!",
+# }
+# Sudoku questions:
+# {
+#     "type": "sudoku",
+#     "q": "Welche Zahlen fehlen?",
+#     "picture": "sudoku.png",
+#     "answer": ["5", "6", "3"],  # question marks from left to right
 # }
 CATEGORIES = [
     {
@@ -346,21 +367,58 @@ CATEGORIES = [
         "color": GREEN_ACCENT,
         "questions": [
             {
-                "type": "ordering",
-                "q": "Ordne die Fotos chronologisch – von alt nach neu!",
-                "count": 14,
-                "photo_prefix": "foto_",  # expects assets/foto_1.jpg … foto_14.jpg
-                # correct order: photo numbers from left (oldest) to right (newest)
-                "answer": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-                "pass_at": 6,  # ≥6 correct positions = point
+                "type": "sudoku",
+                "q": "Welche Zahlen fehlen?",
+                "picture": "sudoku.png",
+                "answer": ["5", "6", "3"],
             },
             {
-                "q": "In welchem Glas ist Alkohol?",
-                "description": "Diese Frage beantwortet jemand anders.",
-                "options": ["1.", "2.", "3.", "4."],
-                "answer": 1,
-                "award_point_on_wrong": True,
-                "wrong_point_message": "Falsch - aber Klara bekommt dafür einen Punkt.",
+                "type": "video_challenge",
+                "video": "beer_pong.MOV",
+                "challenge": "Zeig uns, dass dieses Video nicht gefälscht ist! 3 Becher, 3 Versuche einen zu treffen",
+            },
+            {
+                "type": "fun_photo",
+                "q": "Was stimmt hier nicht?",
+                "photo": "haare",
+                "answers": [
+                    "Haare",
+                    "Haare von Klemens",
+                    "Frisur",
+                    "Klemens Haare",
+                    "Klemens Glatze",
+                    "Glatze",
+                ],
+            },
+            {
+                "type": "fun_photo",
+                "q": "Was stimmt hier nicht?",
+                "photo": "handy",
+                "answers": ["Handy", "Telefon"],
+            },
+            {
+                "type": "fun_photo",
+                "q": "Was stimmt hier nicht?",
+                "photo": "hund",
+                "answers": ["Hund", "Katze", "Tier", "Tier in der Hand"],
+            },
+            {
+                "type": "fun_photo",
+                "q": "Was stimmt hier nicht?",
+                "photo": "pyjama",
+                "answers": ["Pyjama", "Pyjamas", "Schlafanzug"],
+            },
+            {
+                "type": "fun_photo",
+                "q": "Was stimmt hier nicht?",
+                "photo": "schnaps",
+                "answers": ["Schnaps", "Alkohol"],
+            },
+            {
+                "type": "fun_photo",
+                "q": "Was stimmt hier nicht?",
+                "photo": "tragen",
+                "answers": ["Tragen", "Vertauscht", "Anders herum"],
             },
             {
                 "type": "audio_text",
@@ -433,6 +491,8 @@ def is_fun_stuff_category(idx):
 
 
 def fun_stuff_unlocked(done):
+    if UNLOCK_FUN_STUFF_IMMEDIATELY:
+        return True
     return all(
         i in done
         for i, category in enumerate(CATEGORIES)
@@ -599,6 +659,10 @@ def load_sound(filename):
     if not filename:
         return None
     path = os.path.join(ASSETS_DIR, filename)
+    if not os.path.exists(path):
+        sound_path = os.path.join(ASSETS_DIR, "sound", filename)
+        if os.path.exists(sound_path):
+            path = sound_path
     if os.path.exists(path):
         try:
             return pygame.mixer.Sound(path)
@@ -1660,9 +1724,7 @@ def question_screen(
         if picture is not None:
             pic_rect = picture.get_rect(center=(WIDTH // 2, scaled(290)))
             frame = pic_rect.inflate(scaled(14), scaled(14))
-            pygame.draw.rect(
-                screen, PANEL_BLUE, frame, border_radius=scaled(10)
-            )
+            pygame.draw.rect(screen, PANEL_BLUE, frame, border_radius=scaled(10))
             pygame.draw.rect(
                 screen,
                 SUCCESS_GREEN_LIGHT,
@@ -1915,6 +1977,345 @@ def audio_text_question_screen(
                 else f"Falsch - richtig ist: {question['answer']}"
             )
             draw_centered_text(screen, result_txt, FONT_OPT_BD, result_col, 480)
+            btn_weiter.draw(screen)
+        else:
+            btn_fertig.draw(screen)
+
+        update_display()
+        clock.tick(FPS)
+
+
+# ---------- Fun photo text question ----------
+
+FUN_PHOTO_DIR = os.path.join(ASSETS_DIR, "fun_fotos")
+FUN_PHOTO_EXTS = ("jpg", "jpeg", "png", "JPG", "JPEG", "PNG")
+
+
+def _find_fun_photo(prefix, original=False):
+    suffix = "_og" if original else ""
+    for ext in FUN_PHOTO_EXTS:
+        path = os.path.join(FUN_PHOTO_DIR, f"{prefix}{suffix}.{ext}")
+        if os.path.exists(path):
+            return path
+    print(f"[hint] missing fun photo: assets/fun_fotos/{prefix}{suffix}.*")
+    return None
+
+
+def _load_scaled_photo_path(path, max_w, max_h, label):
+    if path and os.path.exists(path):
+        try:
+            img = pygame.image.load(path).convert_alpha()
+            iw, ih = img.get_size()
+            scale = min(max_w / iw, max_h / ih)
+            size = (max(1, int(iw * scale)), max(1, int(ih * scale)))
+            return pygame.transform.smoothscale(img, size)
+        except pygame.error as e:
+            print(f"Could not load fun photo '{path}': {e}")
+
+    surf = pygame.Surface((max_w, max_h), pygame.SRCALPHA)
+    surf.fill(PANEL_BLUE)
+    pygame.draw.rect(surf, MUTED_TEXT, surf.get_rect(), max(1, scaled(2)))
+    text = FONT_SMALL.render(label, True, MUTED_TEXT)
+    surf.blit(text, text.get_rect(center=surf.get_rect().center))
+    return surf
+
+
+def _answer_matches_any_word(answer_text, accepted_words):
+    normalized_answer = _normalize_text_answer(answer_text)
+    return any(
+        word and _normalize_text_answer(word) in normalized_answer
+        for word in accepted_words
+    )
+
+
+def fun_photo_question_screen(
+    idx, question, total, joker_used, category_name="", category_color=None
+):
+    prefix = question["photo"]
+    modified_path = _find_fun_photo(prefix, original=False)
+    original_path = _find_fun_photo(prefix, original=True)
+    max_photo_w, max_photo_h = scaled(680), scaled(360)
+    modified_photo = _load_scaled_photo_path(
+        modified_path, max_photo_w, max_photo_h, f"add {prefix}.*"
+    )
+    original_photo = _load_scaled_photo_path(
+        original_path, max_photo_w, max_photo_h, f"add {prefix}_og.*"
+    )
+
+    accepted_words = question.get("answers", question.get("answer", []))
+    if isinstance(accepted_words, str):
+        accepted_words = [accepted_words]
+
+    answer_text = ""
+    revealed = False
+    showing_original = False
+    is_correct = False
+
+    input_w, input_h = scaled(640), scaled(58)
+    input_rect = pygame.Rect(WIDTH // 2 - input_w // 2, scaled(565), input_w, input_h)
+    btn_weiter = Button((WIDTH // 2 - 130, 642, 260, 52), "Weiter", primary=False)
+
+    def reveal_answer():
+        nonlocal revealed, showing_original, is_correct
+        if revealed or not answer_text.strip():
+            return
+        revealed = True
+        showing_original = True
+        is_correct = _answer_matches_any_word(answer_text, accepted_words)
+        sfx = CORRECT_SFX if is_correct else WRONG_SFX
+        if sfx:
+            sfx.play()
+
+    while True:
+        for event in get_events():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+
+            if not revealed:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        answer_text = answer_text[:-1]
+                    elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                        reveal_answer()
+                    elif (
+                        event.unicode
+                        and event.unicode.isprintable()
+                        and len(answer_text) < 50
+                    ):
+                        answer_text += event.unicode
+            elif btn_weiter.handle(event):
+                return is_correct
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                current_photo = original_photo if showing_original else modified_photo
+                photo_rect = current_photo.get_rect(center=(WIDTH // 2, scaled(350)))
+                if photo_rect.collidepoint(event.pos):
+                    if revealed:
+                        showing_original = not showing_original
+                    else:
+                        reveal_answer()
+
+        draw_studio_background(screen)
+        draw_corner_decorations(screen)
+
+        hdr_color = category_color or ACCENT_BLUE_LIGHT
+        cat_lbl = f"{category_name}  ·  " if category_name else ""
+        draw_centered_text(
+            screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 78
+        )
+        draw_joker_icons(screen, joker_used)
+        draw_divider(screen, 108, width=260)
+
+        lines = wrap_text(question["q"], FONT_Q, WIDTH - 200)
+        for i, line in enumerate(lines):
+            draw_centered_text(screen, line, FONT_Q, TEXT_LIGHT, 135 + i * 38)
+
+        photo = original_photo if showing_original else modified_photo
+        photo_rect = photo.get_rect(center=(WIDTH // 2, scaled(350)))
+        frame = photo_rect.inflate(scaled(14), scaled(14))
+        border_col = SUCCESS_GREEN if revealed and is_correct else ACCENT_BLUE_LIGHT
+        if revealed and not is_correct:
+            border_col = WRONG_RED
+        pygame.draw.rect(screen, PANEL_BLUE, frame, border_radius=scaled(10))
+        pygame.draw.rect(
+            screen, border_col, frame, max(1, scaled(2)), border_radius=scaled(10)
+        )
+        screen.blit(photo, photo_rect)
+
+        pygame.draw.rect(screen, WHITE, input_rect, border_radius=12)
+        pygame.draw.rect(
+            screen,
+            MUTED_TEXT if revealed else SUCCESS_GREEN,
+            input_rect,
+            2,
+            border_radius=12,
+        )
+        shown_text = answer_text if answer_text else "Antwort eintippen..."
+        text_col = TEXT_DARK if answer_text else MUTED_TEXT
+        text_surf = FONT_OPT.render(shown_text[-38:], True, text_col)
+        screen.blit(
+            text_surf,
+            text_surf.get_rect(midleft=(input_rect.x + scaled(22), input_rect.centery)),
+        )
+
+        if not revealed and (pygame.time.get_ticks() // 500) % 2 == 0:
+            cursor_x = input_rect.x + scaled(24) + FONT_OPT.size(answer_text[-38:])[0]
+            pygame.draw.line(
+                screen,
+                TEXT_DARK,
+                (cursor_x, input_rect.y + scaled(15)),
+                (cursor_x, input_rect.bottom - scaled(15)),
+                2,
+            )
+
+        if revealed:
+            result_txt = "Richtig!" if is_correct else "Falsch"
+            result_col = SUCCESS_GREEN if is_correct else WRONG_RED
+            draw_centered_text(screen, result_txt, FONT_OPT_BD, result_col, 632)
+            btn_weiter.draw(screen)
+        else:
+            draw_centered_text(
+                screen,
+                "Nach der Antwort auf das Bild klicken",
+                FONT_SMALL,
+                MUTED_TEXT,
+                642,
+            )
+
+        update_display()
+        clock.tick(FPS)
+
+
+# ---------- Sudoku number question ----------
+
+
+def sudoku_question_screen(
+    idx, question, total, joker_used, category_name="", category_color=None
+):
+    picture = load_question_picture(question.get("picture"), scaled(390), scaled(390))
+    answers = [str(x) for x in question["answer"]]
+    values = ["", "", ""]
+    active = 0
+    submitted = False
+    is_correct = False
+
+    box_size = scaled(68)
+    box_gap = scaled(24)
+    total_w = 3 * box_size + 2 * box_gap
+    input_y = scaled(555)
+    input_rects = [
+        pygame.Rect(
+            WIDTH // 2 - total_w // 2 + i * (box_size + box_gap),
+            input_y,
+            box_size,
+            box_size,
+        )
+        for i in range(3)
+    ]
+    button_y = input_y + box_size + scaled(30)
+    btn_fertig = Button(
+        (WIDTH // 2 - scaled(130), button_y, scaled(260), scaled(52)),
+        "Fertig!",
+        True,
+        raw=True,
+    )
+    btn_weiter = Button(
+        (WIDTH // 2 - scaled(130), button_y, scaled(260), scaled(52)),
+        "Weiter",
+        False,
+        raw=True,
+    )
+
+    def delete_last_digit():
+        nonlocal active
+        filled = [i for i, value in enumerate(values) if value]
+        if not filled:
+            active = 0
+            return
+        idx_to_clear = filled[-1]
+        values[idx_to_clear] = ""
+        active = idx_to_clear
+
+    def submit():
+        nonlocal submitted, is_correct
+        if submitted or any(not value for value in values):
+            return
+        submitted = True
+        is_correct = values == answers
+        sfx = CORRECT_SFX if is_correct else WRONG_SFX
+        if sfx:
+            sfx.play()
+
+    while True:
+        for event in get_events():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+
+            if not submitted:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    for i, rect in enumerate(input_rects):
+                        if rect.collidepoint(event.pos):
+                            active = i
+                            break
+                if event.type == pygame.KEYDOWN:
+                    if event.key in (pygame.K_BACKSPACE, pygame.K_DELETE):
+                        delete_last_digit()
+                    elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                        submit()
+                    elif event.unicode in "123456789":
+                        values[active] = event.unicode
+                        active = min(2, active + 1)
+                if btn_fertig.handle(event):
+                    submit()
+            elif btn_weiter.handle(event):
+                return is_correct
+
+        draw_studio_background(screen)
+        draw_corner_decorations(screen)
+
+        hdr_color = category_color or ACCENT_BLUE_LIGHT
+        cat_lbl = f"{category_name}  ·  " if category_name else ""
+        draw_centered_text(
+            screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 78
+        )
+        draw_joker_icons(screen, joker_used)
+        draw_divider(screen, 108, width=260)
+
+        lines = wrap_text(question["q"], FONT_Q, WIDTH - 200)
+        for i, line in enumerate(lines):
+            draw_centered_text(screen, line, FONT_Q, TEXT_LIGHT, 135 + i * 38)
+
+        if picture is not None:
+            pic_rect = picture.get_rect(center=(WIDTH // 2, scaled(355)))
+            frame = pic_rect.inflate(scaled(12), scaled(12))
+            pygame.draw.rect(screen, PANEL_BLUE, frame, border_radius=scaled(10))
+            pygame.draw.rect(
+                screen,
+                ACCENT_BLUE_LIGHT,
+                frame,
+                max(1, scaled(2)),
+                border_radius=scaled(10),
+            )
+            screen.blit(picture, pic_rect)
+
+        for i, rect in enumerate(input_rects):
+            if submitted:
+                border = SUCCESS_GREEN if values[i] == answers[i] else WRONG_RED
+            else:
+                border = SUCCESS_GREEN_LIGHT if i == active else MUTED_TEXT
+            pygame.draw.rect(screen, WHITE, rect, border_radius=scaled(10))
+            pygame.draw.rect(
+                screen, border, rect, max(2, scaled(2)), border_radius=scaled(10)
+            )
+            label = FONT_TITLE.render(
+                values[i] if values[i] else "?",
+                True,
+                TEXT_DARK if values[i] else MUTED_TEXT,
+            )
+            screen.blit(label, label.get_rect(center=rect.center))
+
+        if submitted:
+            result_txt = (
+                "Richtig!"
+                if is_correct
+                else f"Falsch - richtig ist: {' '.join(answers)}"
+            )
+            result_col = SUCCESS_GREEN if is_correct else WRONG_RED
+            draw_centered_text_px(
+                screen,
+                result_txt,
+                FONT_OPT_BD,
+                result_col,
+                button_y - scaled(18),
+            )
             btn_weiter.draw(screen)
         else:
             btn_fertig.draw(screen)
@@ -2256,6 +2657,16 @@ def _make_frame_surface(frame_bgr):
     rgb = _cv2.cvtColor(frame_bgr, _cv2.COLOR_BGR2RGB)
     scaled = _cv2.resize(rgb, (_VID_W, _VID_H))
     return pygame.surfarray.make_surface(scaled.swapaxes(0, 1))
+
+
+def _make_frame_surface_fit(frame_bgr, max_w, max_h):
+    """Convert an OpenCV frame to a pygame Surface while preserving aspect ratio."""
+    rgb = _cv2.cvtColor(frame_bgr, _cv2.COLOR_BGR2RGB)
+    ih, iw = rgb.shape[:2]
+    scale = min(max_w / iw, max_h / ih)
+    size = (max(1, int(iw * scale)), max(1, int(ih * scale)))
+    scaled_frame = _cv2.resize(rgb, size)
+    return pygame.surfarray.make_surface(scaled_frame.swapaxes(0, 1))
 
 
 def video_question_screen(
@@ -2623,6 +3034,193 @@ def video_question_screen(
         clock.tick(FPS)
 
 
+def video_challenge_screen(
+    idx, question, total, joker_used, category_name="", category_color=None
+):
+    video_path = os.path.join(ASSETS_DIR, question["video"])
+    challenge_text = question.get("challenge", "")
+    chal_w, chal_h = scaled(330), scaled(440)
+    chal_x = (WIDTH - chal_w) // 2
+    chal_y = scaled(78)
+    video_rect = pygame.Rect(chal_x, chal_y, chal_w, chal_h)
+    prompt_y = video_rect.bottom + scaled(24)
+    button_y = video_rect.bottom + scaled(112)
+    btn_success = Button(
+        (WIDTH // 2 - scaled(280), button_y, scaled(240), scaled(48)),
+        "Geschafft",
+        True,
+        raw=True,
+    )
+    btn_failure = Button(
+        (WIDTH // 2 + scaled(40), button_y, scaled(240), scaled(48)),
+        "Nicht geschafft",
+        False,
+        raw=True,
+    )
+
+    cap = None
+    frame_surf = None
+    vid_fps = 30.0
+    frame_ms = 1000.0 / vid_fps
+    has_audio = False
+
+    if not _CV2_OK:
+        print("[warn] opencv-python not installed — video challenge will skip playback")
+        vid_ended = True
+        not_started = False
+        playing = False
+    elif not os.path.exists(video_path):
+        print(f"[warn] video not found: {video_path}")
+        vid_ended = True
+        not_started = False
+        playing = False
+    else:
+        cap = _cv2.VideoCapture(video_path)
+        vid_fps = cap.get(_cv2.CAP_PROP_FPS) or 30.0
+        frame_ms = 1000.0 / vid_fps
+
+        ret0, frm0 = cap.read()
+        if ret0:
+            frame_surf = _make_frame_surface_fit(frm0, chal_w, chal_h)
+            cap.set(_cv2.CAP_PROP_POS_MSEC, 0)
+
+        audio_file = _resolve_video_audio(video_path, question.get("audio", ""))
+        if audio_file:
+            try:
+                pygame.mixer.music.load(audio_file)
+                has_audio = True
+            except Exception as e:
+                print(f"[warn] audio load failed: {e}")
+
+        vid_ended = False
+        not_started = True
+        playing = False
+
+    play_start = 0
+    last_read_ms = 0
+
+    def start_playback():
+        nonlocal play_start, last_read_ms, playing, not_started, vid_ended
+        if cap is None:
+            return
+        cap.set(_cv2.CAP_PROP_POS_MSEC, 0)
+        if has_audio:
+            pygame.mixer.music.play()
+        play_start = pygame.time.get_ticks()
+        last_read_ms = play_start - frame_ms
+        playing = True
+        not_started = False
+        vid_ended = False
+
+    def finish_video():
+        nonlocal playing, vid_ended
+        playing = False
+        vid_ended = True
+        if has_audio:
+            pygame.mixer.music.stop()
+
+    while True:
+        now = pygame.time.get_ticks()
+
+        for event in get_events():
+            if event.type == pygame.QUIT:
+                if has_audio:
+                    pygame.mixer.music.stop()
+                if cap is not None:
+                    cap.release()
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                if has_audio:
+                    pygame.mixer.music.stop()
+                if cap is not None:
+                    cap.release()
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if video_rect.collidepoint(event.pos) and (not_started or vid_ended):
+                    start_playback()
+                    continue
+
+            if vid_ended:
+                if btn_success.handle(event):
+                    if cap is not None:
+                        cap.release()
+                    return True
+                if btn_failure.handle(event):
+                    if cap is not None:
+                        cap.release()
+                    return False
+
+        if playing and cap is not None and now - last_read_ms >= frame_ms:
+            latest_frm = None
+            while now - last_read_ms >= frame_ms:
+                ret, frm = cap.read()
+                if not ret:
+                    finish_video()
+                    break
+                latest_frm = frm
+                last_read_ms += frame_ms
+            if latest_frm is not None:
+                frame_surf = _make_frame_surface_fit(latest_frm, chal_w, chal_h)
+
+        draw_studio_background(screen)
+        draw_corner_decorations(screen)
+
+        hdr_color = category_color or ACCENT_BLUE_LIGHT
+        cat_lbl = f"{category_name}  ·  " if category_name else ""
+        draw_centered_text(
+            screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 40
+        )
+        draw_joker_icons(screen, joker_used)
+
+        if frame_surf:
+            frame_rect = frame_surf.get_rect(center=video_rect.center)
+            screen.blit(frame_surf, frame_rect)
+        else:
+            pygame.draw.rect(screen, TEXT_LIGHT, video_rect)
+            draw_centered_text_px(
+                screen, "Wird geladen …", FONT_SMALL, MUTED_TEXT, video_rect.centery
+            )
+        pygame.draw.rect(screen, SUCCESS_GREEN, video_rect, 2)
+
+        if not_started:
+            veil = pygame.Surface((video_rect.w, video_rect.h), pygame.SRCALPHA)
+            veil.fill((0, 0, 0, 100))
+            screen.blit(veil, video_rect)
+            cx, cy = video_rect.center
+            r = 44
+            pygame.draw.circle(screen, WHITE, (cx, cy), r)
+            pygame.draw.circle(screen, SUCCESS_GREEN_DARK, (cx, cy), r, 3)
+            tri = [(cx - 14, cy - 22), (cx - 14, cy + 22), (cx + 22, cy)]
+            pygame.draw.polygon(screen, SUCCESS_GREEN_DARK, tri)
+            hint = FONT_SUB.render("Klick zum Starten", True, WHITE)
+            shade = pygame.Surface(
+                (hint.get_width() + 20, hint.get_height() + 10), pygame.SRCALPHA
+            )
+            shade.fill((0, 0, 0, 160))
+            shade_pos = (cx - shade.get_width() // 2, cy + r + 14)
+            screen.blit(shade, shade_pos)
+            screen.blit(hint, (shade_pos[0] + 10, shade_pos[1] + 5))
+
+        if vid_ended:
+            prompt_lines = wrap_text(challenge_text, FONT_Q, WIDTH - scaled(180))
+            for i, line in enumerate(prompt_lines):
+                draw_centered_text_px(
+                    screen,
+                    line,
+                    FONT_Q,
+                    TEXT_LIGHT,
+                    prompt_y + i * scaled(34),
+                )
+            btn_success.draw(screen)
+            btn_failure.draw(screen)
+
+        update_display()
+        clock.tick(FPS)
+
+
 def end_screen(score, total):
     btn = Button((WIDTH // 2 - 200, HEIGHT - 130, 400, 68), "Ende", primary=False)
 
@@ -2728,8 +3326,20 @@ def main():
                     result = audio_text_question_screen(
                         qi, q, len(cat["questions"]), **kwargs
                     )
+                elif qtype == "fun_photo":
+                    result = fun_photo_question_screen(
+                        qi, q, len(cat["questions"]), **kwargs
+                    )
+                elif qtype == "sudoku":
+                    result = sudoku_question_screen(
+                        qi, q, len(cat["questions"]), **kwargs
+                    )
                 elif qtype == "video":
                     result = video_question_screen(
+                        qi, q, len(cat["questions"]), **kwargs
+                    )
+                elif qtype == "video_challenge":
+                    result = video_challenge_screen(
                         qi, q, len(cat["questions"]), **kwargs
                     )
                 else:
