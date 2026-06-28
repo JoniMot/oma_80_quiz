@@ -36,7 +36,9 @@ WIDTH, HEIGHT = BASE_WIDTH, BASE_HEIGHT
 FPS = 60
 FULLSCREEN = True
 UI_SCALE = 1.0
-UNLOCK_FUN_STUFF_IMMEDIATELY = True
+UNLOCK_FUN_STUFF_IMMEDIATELY = False
+SHOW_FINAL_SCREEN_IMMEDIATELY = False
+ENABLE_GATTE_JOKER = True
 
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
 IMAGE_CANDIDATES = [
@@ -169,7 +171,7 @@ CATEGORIES = [
                 "answer": 1,
             },
             {
-                "q": "Welcher internationale Politiker wird 2026 auch 80 Jahre alt?",
+                "q": "Welcher internationale Politiker wird/wurde 2026 auch 80 Jahre alt?",
                 "options": [
                     "Heinz Fischer",
                     "Angela Merkel",
@@ -185,8 +187,8 @@ CATEGORIES = [
             },
             {
                 "q": "Welches dieser Fahrzeuge feiert im Jahr 2026 seinen 80. Geburtstag?",
-                "options": ["VW Käfer", "Vespa", "Mini", "Fiat 500"],
-                "answer": 1,
+                "options": ["VW Käfer", "Mini", "Fiat 500", "Vespa"],
+                "answer": 3,
             },
             {
                 "q": "Wie breit ist die sogenannte Normalspur, die bei den meisten Eisenbahnstrecken in Europa verwendet wird?",
@@ -331,10 +333,10 @@ CATEGORIES = [
                 "answer": 1,
             },
             {
-                "q": "Was bestellte Jakob beim Cafe, wo ihr euch kennengelernt habt?",  # TODO bei opa nachfragen
+                "q": "Was bestellte Jakob beim Cafe, wo ihr euch kennengelernt habt?",
                 "options": [
                     "Sachertorte & Apfelsaft",
-                    "Cremeschnitte & Bier",
+                    "Biskuitroulade & Bier",
                     "Topfenkuchen & Kaffee",
                     "Apfelkuchen & Radler",
                 ],
@@ -613,6 +615,15 @@ def load_sound(filename):
 PORTRAIT = load_portrait()
 TITLE_PHOTO = load_title_photo(scaled(220))
 TITLE_LOGO = load_title_logo()
+FINAL_PHOTO = load_question_picture("oma_krone_cutout.png", scaled(230), scaled(300))
+LAPTOP_PROGRESS_PHOTOS = [
+    load_question_picture("laptop_voll_verpixelt.png", scaled(96), scaled(72)),
+    load_question_picture("laptop_semi_verpixelt.png", scaled(96), scaled(72)),
+    load_question_picture("laptop_wenig_verpixelt.png", scaled(96), scaled(72)),
+]
+FINAL_LAPTOP_PHOTO = load_question_picture(
+    "laptop_final.jpeg", scaled(210), scaled(150)
+)
 INTRO_SOUND = load_sound(QUESTION_INTRO_SOUND)
 TITLE_MUSIC = load_sound(TITLE_SOUND)
 LOCKIN_SFX = load_sound(LOCKIN_SOUND)
@@ -1095,9 +1106,14 @@ _JOKER_COLORS = [SUCCESS_GREEN, ACCENT_BLUE, GREEN_ACCENT, ANSWER_BLUE]
 _JOKER_LABELS = ["PUB", "GATTE", "KIDS", "50:50"]
 
 
+def joker_enabled(index):
+    return index != 1 or ENABLE_GATTE_JOKER
+
+
 def draw_joker_icons(surf, used):
     for i, (cx, cy) in enumerate(_JOKER_CENTERS):
-        active = not used[i]
+        enabled = joker_enabled(i)
+        active = enabled and not used[i]
         color = _JOKER_COLORS[i] if active else MUTED_TEXT
         pygame.draw.circle(surf, color, (cx, cy), _JOKER_RADIUS)
         pygame.draw.circle(surf, STAGE_BLUE, (cx, cy), _JOKER_RADIUS, 1)
@@ -1114,6 +1130,8 @@ def joker_clicked(event):
     if event.type != pygame.MOUSEBUTTONDOWN or event.button != 1:
         return -1
     for i, (cx, cy) in enumerate(_JOKER_CENTERS):
+        if not joker_enabled(i):
+            continue
         if math.hypot(event.pos[0] - cx, event.pos[1] - cy) <= _JOKER_RADIUS:
             return i
     return -1
@@ -1171,18 +1189,42 @@ def show_publikum_joker(surf_behind):
                 return
 
         screen.blit(surf_behind, (0, 0))
-        px, py, pw, ph = draw_modal_base(screen, height=470)
+        pw, ph = scaled(760), scaled(270)
+        px, py = (WIDTH - pw) // 2, scaled(92)
+        panel = pygame.Surface((pw, ph), pygame.SRCALPHA)
+        panel.fill((9, 22, 56, 225))
+        screen.blit(panel, (px, py))
+        pygame.draw.rect(
+            screen,
+            SUCCESS_GREEN,
+            (px, py, pw, ph),
+            max(1, scaled(2)),
+            border_radius=scaled(18),
+        )
+        pygame.draw.rect(
+            screen,
+            SUCCESS_GREEN_LIGHT,
+            (px + scaled(7), py + scaled(7), pw - scaled(14), ph - scaled(14)),
+            max(1, scaled(1)),
+            border_radius=scaled(13),
+        )
         if btn is None:
             btn = Button(
-                (BASE_WIDTH // 2 - 130, BASE_HEIGHT // 2 + 185, 260, 58),
+                (
+                    WIDTH // 2 - scaled(130),
+                    py + ph - scaled(52),
+                    scaled(260),
+                    scaled(44),
+                ),
                 "Fertig!",
                 primary=True,
+                raw=True,
             )
 
         draw_centered_text_px(
-            screen, "Publikums-Joker", FONT_Q, TEXT_LIGHT, py + scaled(52)
+            screen, "Publikums-Joker", FONT_SUB, TEXT_LIGHT, py + scaled(34)
         )
-        draw_divider_px(screen, py + scaled(78), width=scaled(200))
+        draw_divider_px(screen, py + scaled(58), width=scaled(200))
 
         total = sum(votes)
         revealed = total >= AUDIENCE_REVEAL_AT
@@ -1191,16 +1233,16 @@ def show_publikum_joker(surf_behind):
             draw_centered_text_px(
                 screen,
                 "Drückt 1, 2, 3 oder 4 zum Abstimmen!",
-                FONT_SUB,
-                SUCCESS_GREEN_DARK,
-                py + scaled(115),
+                FONT_SMALL,
+                SUCCESS_GREEN_LIGHT,
+                py + scaled(88),
             )
             draw_centered_text_px(
                 screen,
                 f"{total} Stimme{'n' if total != 1 else ''} abgegeben",
                 FONT_SMALL,
                 MUTED_TEXT,
-                py + scaled(158),
+                py + scaled(118),
             )
             dots = "." * ((pygame.time.get_ticks() // 500) % 4)
             draw_centered_text_px(
@@ -1208,7 +1250,7 @@ def show_publikum_joker(surf_behind):
                 f"Warte auf Stimmen{dots}",
                 FONT_SMALL,
                 MUTED_TEXT,
-                py + scaled(184),
+                py + scaled(144),
             )
         else:
             draw_centered_text_px(
@@ -1216,12 +1258,12 @@ def show_publikum_joker(surf_behind):
                 "Drückt 1, 2, 3 oder 4 zum Abstimmen!",
                 FONT_SMALL,
                 MUTED_TEXT,
-                py + scaled(98),
+                py + scaled(80),
             )
             bar_x = px + scaled(120)
             bar_max_w = pw - scaled(260)
-            bar_h, gap = scaled(34), scaled(13)
-            bar_start = py + scaled(122)
+            bar_h, gap = scaled(20), scaled(8)
+            bar_start = py + scaled(98)
             for i in range(4):
                 by = bar_start + i * (bar_h + gap)
                 pct = votes[i] / total
@@ -1372,24 +1414,45 @@ def info_screen():
         descs = [
             "Gäste tippen 1–4.\nBalken erscheinen\nnach 5 Stimmen.",
             "Frag deinen Gatten.",
-            "Frag die Kinder\ngemeinsam.",
+            "Frag deine Kinder.",
             "Zwei falsche\nAntworten\nverschwinden.",
         ]
 
-        for bcx, lbl, col, title, desc in zip(block_cxs, labels, colors, titles, descs):
+        for idx, (bcx, lbl, col, title, desc) in enumerate(
+            zip(block_cxs, labels, colors, titles, descs)
+        ):
+            enabled = joker_enabled(idx)
+            col = col if enabled else MUTED_TEXT
+            text_col = TEXT_LIGHT if enabled else MUTED_TEXT
             # Icon circle (centred on bcx)
             pygame.draw.circle(screen, col, (bcx, circle_y), scaled(28))
             pygame.draw.circle(
                 screen, STAGE_BLUE, (bcx, circle_y), scaled(28), max(1, scaled(1))
             )
+            if not enabled:
+                d = scaled(22)
+                pygame.draw.line(
+                    screen,
+                    PANEL_BLUE,
+                    (bcx - d, circle_y - d),
+                    (bcx + d, circle_y + d),
+                    2,
+                )
+                pygame.draw.line(
+                    screen,
+                    PANEL_BLUE,
+                    (bcx + d, circle_y - d),
+                    (bcx - d, circle_y + d),
+                    2,
+                )
             lbl_s = FONT_SMALL.render(lbl, True, WHITE)
             screen.blit(lbl_s, lbl_s.get_rect(center=(bcx, circle_y)))
             # Title centred
-            t_s = FONT_OPT_BD.render(title, True, TEXT_LIGHT)
+            t_s = FONT_OPT_BD.render(title, True, text_col)
             screen.blit(t_s, t_s.get_rect(center=(bcx, label_y)))
             # Description lines centred
             for di, dline in enumerate(desc.split("\n")):
-                d_s = FONT_SMALL.render(dline, True, TEXT_LIGHT)
+                d_s = FONT_SMALL.render(dline, True, text_col)
                 screen.blit(d_s, d_s.get_rect(center=(bcx, desc_y + di * scaled(20))))
 
         # Click mechanic reminder
@@ -1421,7 +1484,7 @@ def info_screen():
         clock.tick(FPS)
 
 
-def category_selection_screen(done):
+def category_selection_screen(done, category_order):
     """
     Shows 4 category cards. done = set of completed category indices.
     Returns the chosen category index, or None if all are done.
@@ -1462,6 +1525,9 @@ def category_selection_screen(done):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for i, (cx, cy) in enumerate(positions):
                     locked = is_fun_stuff_category(i) and not fun_stuff_unlocked(done)
+                    if i in done and pygame.Rect(cx, cy, card_w, card_h).collidepoint(mx, my):
+                        progress_bars_screen(done, category_order, current_idx=i)
+                        break
                     if (
                         i not in done
                         and not locked
@@ -1548,7 +1614,7 @@ def category_selection_screen(done):
                     name_s, name_s.get_rect(center=(r.centerx, r.centery - scaled(22)))
                 )
                 sub_s = FONT_SMALL.render(
-                    f"{len(cat['questions'])} Fragen · leicht  →  schwer",
+                    f"{len(cat['questions'])} Fragen",
                     True,
                     MUTED_TEXT,
                 )
@@ -1565,6 +1631,130 @@ def category_selection_screen(done):
                         screen, PANEL_BLUE, (dot_x, dot_y), scaled(5), max(1, scaled(1))
                     )
 
+        update_display()
+        clock.tick(FPS)
+
+
+def progress_bars_screen(done, category_order, current_idx=None):
+    """Shows category progress as a pyramid of growing bars."""
+    btn = Button(
+        (WIDTH // 2 - scaled(130), HEIGHT - scaled(84), scaled(260), scaled(52)),
+        "Weiter",
+        primary=False,
+        raw=True,
+    )
+
+    while True:
+        for event in get_events():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if btn.handle(event):
+                    return
+                return
+
+        blink_on = (pygame.time.get_ticks() // 360) % 2 == 0
+
+        draw_studio_background(screen)
+        draw_string_lights(screen, y_anchor=52, sag=24, bulbs=14)
+        draw_corner_decorations(screen)
+
+        draw_centered_text(screen, "Zwischenstand", FONT_TITLE, TEXT_LIGHT, 92)
+        draw_centered_text(
+            screen,
+            f"{len(done)} von {len(CATEGORIES)} Kategorien geschafft",
+            FONT_SUB,
+            MUTED_TEXT,
+            138,
+        )
+
+        max_w = scaled(780)
+        min_w = scaled(300)
+        bar_h = scaled(58)
+        gap = scaled(18)
+        start_y = scaled(255)
+        total = max(1, len(CATEGORIES) - 1)
+
+        crown_cx = WIDTH // 2
+        crown_y = start_y - scaled(78)
+        crown_pts = [
+            (crown_cx - scaled(52), crown_y + scaled(42)),
+            (crown_cx - scaled(42), crown_y + scaled(8)),
+            (crown_cx - scaled(18), crown_y + scaled(30)),
+            (crown_cx, crown_y),
+            (crown_cx + scaled(18), crown_y + scaled(30)),
+            (crown_cx + scaled(42), crown_y + scaled(8)),
+            (crown_cx + scaled(52), crown_y + scaled(42)),
+        ]
+        pygame.draw.polygon(screen, GOLD_LIGHT, crown_pts)
+        pygame.draw.rect(
+            screen,
+            GOLD,
+            (crown_cx - scaled(50), crown_y + scaled(38), scaled(100), scaled(16)),
+            border_radius=scaled(4),
+        )
+        pygame.draw.polygon(screen, TEXT_DARK, crown_pts, max(1, scaled(2)))
+        for px, py in (
+            (crown_cx - scaled(42), crown_y + scaled(8)),
+            (crown_cx, crown_y),
+            (crown_cx + scaled(42), crown_y + scaled(8)),
+        ):
+            pygame.draw.circle(screen, GOLD_LIGHT, (px, py), scaled(7))
+            pygame.draw.circle(screen, TEXT_DARK, (px, py), scaled(7), max(1, scaled(1)))
+
+        current_laptop = None
+        current_laptop_anchor = None
+        for round_idx in range(len(CATEGORIES)):
+            cat_idx = (
+                category_order[round_idx]
+                if round_idx < len(category_order)
+                else None
+            )
+            visual_slot = len(CATEGORIES) - 1 - round_idx
+            t = round_idx / total
+            bar_w = int(max_w - (max_w - min_w) * t)
+            x = WIDTH // 2 - bar_w // 2
+            y = start_y + visual_slot * (bar_h + gap)
+            rect = pygame.Rect(x, y, bar_w, bar_h)
+
+            if cat_idx in done:
+                fill = GOLD
+                border = GOLD_LIGHT
+                text_col = TEXT_DARK
+            elif cat_idx == current_idx:
+                fill = SUCCESS_GREEN_LIGHT if blink_on else SUCCESS_GREEN_DARK
+                border = WHITE if blink_on else SUCCESS_GREEN_LIGHT
+                text_col = TEXT_DARK if blink_on else WHITE
+            else:
+                fill = PANEL_BLUE
+                border = MUTED_TEXT
+                text_col = MUTED_TEXT
+
+            pygame.draw.rect(screen, fill, rect, border_radius=scaled(8))
+            pygame.draw.rect(
+                screen, border, rect, max(1, scaled(2)), border_radius=scaled(8)
+            )
+
+            label = FONT_OPT_BD.render(f"Runde {round_idx + 1}", True, text_col)
+            screen.blit(label, label.get_rect(center=rect.center))
+
+            if (
+                cat_idx == current_idx
+                and current_laptop is None
+                and round_idx < len(LAPTOP_PROGRESS_PHOTOS)
+            ):
+                current_laptop = LAPTOP_PROGRESS_PHOTOS[round_idx]
+                current_laptop_anchor = (rect.x - scaled(18), rect.centery)
+
+        if current_laptop is not None and current_laptop_anchor is not None:
+            laptop_rect = current_laptop.get_rect(midright=current_laptop_anchor)
+            screen.blit(current_laptop, laptop_rect)
+
+        btn.draw(screen)
         update_display()
         clock.tick(FPS)
 
@@ -3082,10 +3272,14 @@ def video_challenge_screen(
 
             if vid_ended:
                 if btn_success.handle(event):
+                    if CORRECT_SFX:
+                        CORRECT_SFX.play()
                     if cap is not None:
                         cap.release()
                     return True
                 if btn_failure.handle(event):
+                    if WRONG_SFX:
+                        WRONG_SFX.play()
                     if cap is not None:
                         cap.release()
                     return False
@@ -3159,7 +3353,13 @@ def video_challenge_screen(
 
 
 def end_screen(score, total):
-    btn = Button((WIDTH // 2 - 200, HEIGHT - 130, 400, 68), "Ende", primary=False)
+    btn = Button(
+        (WIDTH // 2 - scaled(160), HEIGHT - scaled(90), scaled(320), scaled(58)),
+        "Ende",
+        primary=False,
+        raw=True,
+    )
+    score_ratio = score / max(1, total)
 
     while True:
         for event in get_events():
@@ -3176,29 +3376,101 @@ def end_screen(score, total):
         draw_string_lights(screen, y_anchor=52, sag=24, bulbs=14)
         draw_corner_decorations(screen)
 
-        draw_centered_text(screen, "Finale!", FONT_TAGLINE, ACCENT_BLUE_LIGHT, 220)
-        draw_centered_text(screen, "Happy Birthday, Oma", FONT_TITLE, TEXT_LIGHT, 290)
-
-        draw_show_bar(screen, WIDTH // 2, 340, w=140, h=14)
-
-        draw_centered_text(
-            screen, f"Score:  {score}  /  {total}", FONT_Q, ACCENT_BLUE_LIGHT, 400
-        )
-        draw_centered_text(screen, "Da ist dein Preis!", FONT_SUB, TEXT_LIGHT, 450)
-
-        # decorative studio-light row
         cx = WIDTH // 2
-        palette = [
-            ANSWER_BLUE,
-            ACCENT_BLUE,
-            GREEN_ACCENT,
-            SUCCESS_GREEN,
-            ANSWER_BLUE,
-            ACCENT_BLUE,
-            GREEN_ACCENT,
+        draw_centered_text(screen, "Finale", FONT_TAGLINE, GOLD_LIGHT, 118)
+        draw_centered_text(screen, "Happy Birthday, Oma", FONT_TITLE, TEXT_LIGHT, 188)
+
+        emblem_center = (cx, scaled(360))
+        outer_r = scaled(112)
+        pygame.draw.circle(screen, GOLD, emblem_center, outer_r, max(1, scaled(3)))
+        pygame.draw.circle(screen, DEEP_BLUE, emblem_center, outer_r - scaled(8))
+        pygame.draw.arc(
+            screen,
+            SUCCESS_GREEN_LIGHT,
+            (
+                emblem_center[0] - outer_r,
+                emblem_center[1] - outer_r,
+                outer_r * 2,
+                outer_r * 2,
+            ),
+            -math.pi / 2,
+            -math.pi / 2 + score_ratio * math.tau,
+            max(3, scaled(5)),
+        )
+
+        if FINAL_LAPTOP_PHOTO is not None:
+            laptop_rect = FINAL_LAPTOP_PHOTO.get_rect(
+                center=(cx - scaled(300), scaled(365))
+            )
+            screen.blit(FINAL_LAPTOP_PHOTO, laptop_rect)
+
+        confetti_colors = [GOLD_LIGHT, SUCCESS_GREEN_LIGHT, ACCENT_BLUE_LIGHT, WHITE]
+        for side_x in (scaled(86), WIDTH - scaled(86)):
+            for i in range(18):
+                y = scaled(210) + i * scaled(22)
+                drift = scaled(18 if i % 2 == 0 else -18)
+                x = side_x + drift + scaled((i % 3 - 1) * 10)
+                color = confetti_colors[i % len(confetti_colors)]
+                if i % 3 == 0:
+                    pygame.draw.circle(screen, color, (x, y), scaled(4))
+                elif i % 3 == 1:
+                    pygame.draw.rect(
+                        screen,
+                        color,
+                        (x - scaled(4), y - scaled(3), scaled(8), scaled(6)),
+                    )
+                else:
+                    pygame.draw.polygon(
+                        screen,
+                        color,
+                        [
+                            (x, y - scaled(5)),
+                            (x + scaled(5), y + scaled(4)),
+                            (x - scaled(5), y + scaled(4)),
+                        ],
+                    )
+
+        if FINAL_PHOTO is not None:
+            photo_rect = FINAL_PHOTO.get_rect(
+                center=(WIDTH - scaled(180), scaled(410))
+            )
+            screen.blit(FINAL_PHOTO, photo_rect)
+
+        score_s = FONT_TITLE.render(f"{score}", True, GOLD_LIGHT)
+        total_s = FONT_SUB.render(f"/ {total}", True, MUTED_TEXT)
+        screen.blit(score_s, score_s.get_rect(center=(cx - scaled(18), scaled(348))))
+        screen.blit(total_s, total_s.get_rect(midleft=(cx + scaled(42), scaled(358))))
+        draw_centered_text(screen, "Punkte", FONT_SMALL, MUTED_TEXT, 420)
+
+        crown_y = scaled(508)
+        crown_pts = [
+            (cx - scaled(82), crown_y + scaled(42)),
+            (cx - scaled(66), crown_y),
+            (cx - scaled(28), crown_y + scaled(30)),
+            (cx, crown_y - scaled(18)),
+            (cx + scaled(28), crown_y + scaled(30)),
+            (cx + scaled(66), crown_y),
+            (cx + scaled(82), crown_y + scaled(42)),
         ]
-        for i, dx in enumerate([-90, -60, -30, 0, 30, 60, 90]):
-            draw_heart(screen, cx + dx, 495, size=8, color=palette[i])
+        pygame.draw.polygon(screen, GOLD_LIGHT, crown_pts)
+        pygame.draw.rect(
+            screen,
+            GOLD,
+            (cx - scaled(78), crown_y + scaled(38), scaled(156), scaled(24)),
+            border_radius=scaled(6),
+        )
+        pygame.draw.polygon(screen, TEXT_DARK, crown_pts, max(1, scaled(2)))
+        for px, py in (
+            (cx - scaled(66), crown_y),
+            (cx, crown_y - scaled(18)),
+            (cx + scaled(66), crown_y),
+        ):
+            pygame.draw.circle(screen, GOLD_LIGHT, (px, py), scaled(9))
+            pygame.draw.circle(
+                screen, TEXT_DARK, (px, py), scaled(9), max(1, scaled(1))
+            )
+
+        draw_centered_text(screen, "Da ist dein Preis!", FONT_SUB, TEXT_LIGHT, 590)
 
         btn.draw(screen)
         update_display()
@@ -3224,17 +3496,23 @@ def main():
     total_questions = sum(len(c["questions"]) for c in CATEGORIES)
     while True:
         title_screen()
+        if SHOW_FINAL_SCREEN_IMMEDIATELY:
+            end_screen(total_questions, total_questions)
+            continue
         info_screen()
 
         score = 0
         joker_used = [False, False, False, False]  # once per full game
         done_cats = set()
+        category_order = []
         first_question_pending = True
 
         while len(done_cats) < len(CATEGORIES):
-            cat_idx = category_selection_screen(done_cats)
+            cat_idx = category_selection_screen(done_cats, category_order)
             if cat_idx is None:
                 break
+            if cat_idx not in category_order:
+                category_order.append(cat_idx)
             cat = CATEGORIES[cat_idx]
             category_joker_used = (
                 [True, True, True, True]
@@ -3242,6 +3520,7 @@ def main():
                 else joker_used
             )
 
+            progress_bars_screen(done_cats, category_order, current_idx=cat_idx)
             category_intro_screen(cat)
 
             for qi, q in enumerate(cat["questions"]):
@@ -3286,6 +3565,7 @@ def main():
                 between_questions_pause(1000)
 
             done_cats.add(cat_idx)
+            progress_bars_screen(done_cats, category_order, current_idx=cat_idx)
 
         end_screen(score, total_questions)
 
