@@ -139,11 +139,6 @@ CATEGORIES = [
                 "answer": 2,
             },
             {
-                "q": "Wann wurde in Österreich offiziell der Euro eingeführt?",
-                "options": ["2000", "2001", "2002", "1999"],
-                "answer": 2,
-            },
-            {
                 "q": "In welchem Jahr fiel die Berliner Mauer?",
                 "options": ["1987", "1988", "1989", "1990"],
                 "answer": 2,
@@ -152,6 +147,11 @@ CATEGORIES = [
                 "q": "Wie heißt die Meeresströmung im Atlantik, die warmes Wasser aus dem Golf von Mexiko nach Europa transportiert?",
                 "options": ["Golfstrom", "Kuroshio", "Labradorstrom", "Canarystrom"],
                 "answer": 0,
+            },
+            {
+                "q": "Wann wurde in Österreich offiziell der Euro eingeführt?",
+                "options": ["2000", "2001", "2002", "1999"],
+                "answer": 2,
             },
             {
                 "q": "Welcher Kontinent hat die meisten Einwohner?",
@@ -184,18 +184,8 @@ CATEGORIES = [
                 "answer": 1,
             },
             {
-                "q": "Welches Vitamin bildet der menschliche Körper hauptsächlich durch Sonnenlicht?",
-                "options": ["Vitamin A", "Vitamin B12", "Vitamin C", "Vitamin D"],
-                "answer": 3,
-            },
-            {
-                "q": "Wie nennt man den großen rotierenden Teil an der Vorderseite einer Tunnelbohrmaschine, der das Gestein abträgt?",
-                "options": [
-                    "Schildmantel",
-                    "Bohrkopf",
-                    "Hydraulikring",
-                    "Förderkammer",
-                ],
+                "q": "Welches dieser Fahrzeuge feiert im Jahr 2026 seinen 80. Geburtstag?",
+                "options": ["VW Käfer", "Vespa", "Mini", "Fiat 500"],
                 "answer": 1,
             },
             {
@@ -207,6 +197,11 @@ CATEGORIES = [
                 "q": "Aus welchem Land stammt Sudoku in seiner heute bekannten Form?",
                 "options": ["China", "Japan", "Südkorea", "Thailand"],
                 "answer": 1,
+            },
+            {
+                "q": "Österreich hat sich heute für die K.O. Phase der WM 2026 mit einem 3:3 gegen Algerien qualifiziert. Wer wird nun der nächste Gegner der Österreicher?",
+                "options": ["Italien", "Japan", "Deutschland", "Spanien"],
+                "answer": 3,
             },
         ],
     },
@@ -220,11 +215,6 @@ CATEGORIES = [
                 "answer": 1,
             },
             {
-                "q": "Welche Temperatur sollte geschmolzene Butter ungefähr haben, wenn sie unter geschlagenes Eiweiß gehoben wird, damit dieses nicht zusammenfällt?",
-                "options": ["Etwa 30 °C", "Etwa 60 °C", "Etwa 90 °C", "Direkt kochend"],
-                "answer": 0,
-            },
-            {
                 "q": "Was bewirkt das sogenannte „Blindbacken“?",
                 "options": [
                     "Der Teig wird ohne Rezept hergestellt",
@@ -233,6 +223,11 @@ CATEGORIES = [
                     "Der Teig ruht im Dunkeln",
                 ],
                 "answer": 1,
+            },
+            {
+                "q": "Welche Temperatur sollte geschmolzene Butter ungefähr haben, wenn sie unter geschlagenes Eiweiß gehoben wird, damit dieses nicht zusammenfällt?",
+                "options": ["Etwa 30 °C", "Etwa 60 °C", "Etwa 90 °C", "Direkt kochend"],
+                "answer": 0,
             },
             {
                 "q": "Was beschreibt in der Bäckerei der Begriff 'Autolyse'?",
@@ -355,11 +350,6 @@ CATEGORIES = [
                 "options": ["Schöller", "Eskimo", "Langnese", "Cornetto"],
                 "answer": 0,
             },
-            {
-                "q": "Mit was wurde das frischgemähte Heu gegen Regenfälle geschützt?",
-                "options": ["Stickstoff", "Heuhiefler", "Schwefel", "Magnesium"],
-                "answer": 1,
-            },
         ],
     },
     {
@@ -375,7 +365,7 @@ CATEGORIES = [
             {
                 "type": "video_challenge",
                 "video": "beer_pong.MOV",
-                "challenge": "Zeig uns, dass dieses Video nicht gefälscht ist! 3 Becher, 3 Versuche einen zu treffen",
+                "challenge": "Zeig uns, dass dieses Video nicht gefälscht ist! \n 3 Becher, 3 Versuche einen zu treffen",
             },
             {
                 "type": "fun_photo",
@@ -420,65 +410,6 @@ CATEGORIES = [
                 "photo": "tragen",
                 "answers": ["Tragen", "Vertauscht", "Anders herum"],
             },
-            {
-                "type": "audio_text",
-                "q": "Wie heißt dieser Song?",
-                "audio": "pferd.mp3",
-                "answer": "Mädchen auf dem Pferd",
-            },
-            {
-                "type": "audio_text",
-                "q": "Wie lautet der Vorname der Künsterlin dieses Songs?",
-                "audio": "murderon.mp3",
-                "answer": "Sophie",
-            },
-            {
-                "type": "video",
-                "q": "Was macht Klara als nächstes?",
-                "video": "sturz.mp4",  # place in assets/
-                "audio": "sturz.mp3",  # optional: extracted audio (ffmpeg -i sturz.mp4 sturz.mp3)
-                "pause_at": 09.0,  # seconds where video freezes
-                "options": [
-                    "Läuft nochmal zur Kamera hin",
-                    "Macht einen Köpfler",
-                    "Läuft weiter",
-                    "Fällt hin",
-                ],
-                "answer": 3,
-            },
-            {
-                "type": "video",
-                "q": "Was macht Klara als nächstes?",
-                "video": "cam_schlag.mp4",  # place in assets/
-                "audio": "cam_schlag.mp3",  # optional: extracted audio (ffmpeg -i leck_mich.mp4 leck_mich.mp3)
-                "pause_at": 06.0,  # seconds where video freezes
-                "options": [
-                    "Erschrickt und Kreischt",
-                    "Erschrickt und schlägt die Kamera",
-                    "Erwartet die Kamera und erschrickt nicht",
-                    "Nimmt die Kamera in die Hand und filmt weiter",
-                ],
-                "answer": 1,
-            },
-            {
-                "type": "video",
-                "q": "Welches Buch von Dan Brown las Klara zu diesem Zeitpunkt?",
-                "video": "illuminati.mp4",  # place in assets/
-                "audio": "illuminati.mp3",  # optional: extracted audio (ffmpeg -i illuminati.mp4 illuminati.mp3)
-                "pause_at": 59.5,  # seconds where video freezes
-                "stop_at": 65.0,  # optional: seconds where video stops after answer
-                "options": ["Inferno", "Illuminati", "Der Da Vinci Code", "Sakrileg"],
-                "answer": 1,
-            },
-            {
-                "type": "video",
-                "q": "Was sagt Klara als nächstes?",
-                "video": "leck_mich.mp4",  # place in assets/
-                "audio": "leck_mich.mp3",  # optional: extracted audio (ffmpeg -i leck_mich.mp4 leck_mich.mp3)
-                "pause_at": 67.0,  # seconds where video freezes
-                "options": ["Gute Nacht", "Nichts", "Sei Leise", "Leck mich"],
-                "answer": 3,
-            },
         ],
     },
 ]
@@ -498,6 +429,12 @@ def fun_stuff_unlocked(done):
         for i, category in enumerate(CATEGORIES)
         if category["name"] != FUN_STUFF_CATEGORY
     )
+
+
+def readable_header_color(color):
+    if color in (ANSWER_BLUE, ACCENT_BLUE):
+        return GOLD_LIGHT
+    return color or ACCENT_BLUE_LIGHT
 
 
 # ---------- Pygame setup ----------
@@ -1651,7 +1588,7 @@ def category_intro_screen(cat):
         draw_corner_decorations(screen)
 
         draw_centered_text(screen, "Kategorie", FONT_SUB, MUTED_TEXT, 270)
-        draw_centered_text(screen, cat["name"], FONT_TITLE, color, 340)
+        draw_centered_text(screen, cat["name"], FONT_TITLE, readable_header_color(color), 340)
         draw_divider(screen, 390, width=200)
         draw_centered_text(
             screen,
@@ -1699,7 +1636,7 @@ def question_screen(
         # Draw base frame first so overlays can snapshot it
         draw_studio_background(screen)
         draw_corner_decorations(screen)
-        hdr_color = category_color if category_color else ACCENT_BLUE_LIGHT
+        hdr_color = readable_header_color(category_color)
         cat_lbl = f"{category_name}  ·  " if category_name else ""
         draw_centered_text(
             screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 78
@@ -1929,7 +1866,7 @@ def audio_text_question_screen(
         draw_studio_background(screen)
         draw_corner_decorations(screen)
 
-        hdr_color = category_color or ACCENT_BLUE_LIGHT
+        hdr_color = readable_header_color(category_color)
         cat_lbl = f"{category_name}  ·  " if category_name else ""
         draw_centered_text(
             screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 78
@@ -2102,7 +2039,7 @@ def fun_photo_question_screen(
         draw_studio_background(screen)
         draw_corner_decorations(screen)
 
-        hdr_color = category_color or ACCENT_BLUE_LIGHT
+        hdr_color = readable_header_color(category_color)
         cat_lbl = f"{category_name}  ·  " if category_name else ""
         draw_centered_text(
             screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 78
@@ -2261,7 +2198,7 @@ def sudoku_question_screen(
         draw_studio_background(screen)
         draw_corner_decorations(screen)
 
-        hdr_color = category_color or ACCENT_BLUE_LIGHT
+        hdr_color = readable_header_color(category_color)
         cat_lbl = f"{category_name}  ·  " if category_name else ""
         draw_centered_text(
             screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 78
@@ -2490,7 +2427,7 @@ def ordering_question_screen(
         draw_studio_background(screen)
         draw_corner_decorations(screen)
 
-        hdr_color = category_color or ACCENT_BLUE_LIGHT
+        hdr_color = readable_header_color(category_color)
         cat_lbl = f"{category_name}  ·  " if category_name else ""
         draw_centered_text(
             screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 78
@@ -2937,7 +2874,7 @@ def video_question_screen(
         draw_studio_background(screen)
         draw_corner_decorations(screen)
 
-        hdr_color = category_color or ACCENT_BLUE_LIGHT
+        hdr_color = readable_header_color(category_color)
         cat_lbl = f"{category_name}  ·  " if category_name else ""
         draw_centered_text(
             screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 40
@@ -3168,7 +3105,7 @@ def video_challenge_screen(
         draw_studio_background(screen)
         draw_corner_decorations(screen)
 
-        hdr_color = category_color or ACCENT_BLUE_LIGHT
+        hdr_color = readable_header_color(category_color)
         cat_lbl = f"{category_name}  ·  " if category_name else ""
         draw_centered_text(
             screen, f"{cat_lbl}Frage  {idx + 1}  /  {total}", FONT_SMALL, hdr_color, 40
